@@ -251,12 +251,12 @@ Include:
 
 ### 6.3 PR Title And Description
 
-All PR output text must use exactly these four sections:
+All PR output text must use exactly these four Chinese sections:
 
-1. Title: one sentence explaining what this PR adds or changes.
-2. Feature description: explain what the feature does and how to use it.
-3. Implementation approach: briefly explain the technical choice or core implementation logic.
-4. Test method: explain how to verify the feature works correctly.
+1. 标题：一句话说明本 PR 新增或修改了什么。
+2. 功能描述：说明该功能的作用与使用方式。
+3. 实现思路：简要说明技术选型或核心实现逻辑。
+4. 测试方式：说明如何验证该功能正常运行。
 
 PR titles and descriptions must be clear, complete, and written in Chinese.
 
