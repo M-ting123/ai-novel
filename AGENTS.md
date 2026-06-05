@@ -251,14 +251,35 @@ Include:
 
 ### 6.3 PR Title And Description
 
-All PR output text must use exactly these four sections:
+All PR output text must use exactly these four Chinese sections:
 
-1. Title: one sentence explaining what this PR adds or changes.
-2. Feature description: explain what the feature does and how to use it.
-3. Implementation approach: briefly explain the technical choice or core implementation logic.
-4. Test method: explain how to verify the feature works correctly.
+```md
+标题：一句话说明本 PR 做了什么
+
+功能描述：
+
+1. ...
+2. ...
+3. ...
+
+实现思路：
+
+1. ...
+2. ...
+3. ...
+
+测试方式：
+
+1. ...
+2. ...
+3. ...
+```
 
 PR titles and descriptions must be clear, complete, and written in Chinese.
+
+PR descriptions can be structured, but they should read like project decisions from this repository, not like a generic AI template. Prefer concrete project context over empty phrases. Explain why the change matters for Novel2Script, the 72h MVP, or the current PR.
+
+Before providing PR text for manual GitHub creation, check for obvious hidden or copied formatting characters in the title and rewrite the title cleanly if needed.
 
 If the user needs to create the GitHub PR manually in the browser, remind the user outside the four-section PR text and provide the four-section PR text to paste.
 
