@@ -217,7 +217,7 @@ Novel2Script YAML Studio 是一个面向小说作者和短剧/漫剧创作者的
 3. YAML 校验失败时，系统显示可理解的错误提示。
 4. 校验失败不会导致页面崩溃。
 
-说明：完整 YAML Schema 文档不在本 PR 中生成，将在下一次 PR 单独完成。
+说明：完整字段契约见 [YAML Schema 设计文档](schema.md)。第一版的 Schema 校验以该文档中的核心模块、关键字段和基础校验原则为依据。
 
 ### 9.6 剧本与分镜预览
 
@@ -252,7 +252,9 @@ Novel2Script YAML Studio 是一个面向小说作者和短剧/漫剧创作者的
 
 ## 10. YAML Schema 核心模块规划
 
-本需求文档只规划 YAML Schema 的核心模块，不定义完整字段细节。完整 Schema 文档将在下一次 PR 中单独生成。
+本需求文档只规划 YAML Schema 的核心模块。字段级契约、字段作用、是否必填和设计原因见 [YAML Schema 设计文档](schema.md)。
+
+第一版的 Schema 文档主要作为后续 AI 生成、Mock 示例、YAML 校验、剧本预览和基础分镜预览的字段契约。`shots` 只作为第一版基础分镜预览字段，不扩展为完整视频生成系统。
 
 第一版 YAML 需要围绕以下模块设计：
 
