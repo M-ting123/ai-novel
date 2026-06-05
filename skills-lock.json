@@ -1,0 +1,29 @@
+{
+  "version": 1,
+  "skills": {
+    "MVP Builder": {
+      "source": "daffy0208/ai-dev-standards",
+      "sourceType": "github",
+      "skillPath": "skills/mvp-builder/SKILL.md",
+      "computedHash": "e37cf075652747e23b7de10b5c25f8e8bac3174d988081b6fac3ca5f10be71ad"
+    },
+    "grill-me": {
+      "source": "mattpocock/skills",
+      "sourceType": "github",
+      "skillPath": "skills/productivity/grill-me/SKILL.md",
+      "computedHash": "daf64ca15f4fa081a6747766db538e2dbd1131725ed4fcdd3d538dc62c7035ba"
+    },
+    "pr-workflow": {
+      "source": "lobbi-docs/claude",
+      "sourceType": "github",
+      "skillPath": "plugins/jira-orchestrator/skills/pr-workflow/SKILL.md",
+      "computedHash": "cb7190c9ca8694b83c6dde60df11178950724a3edd128a88555d3f4e0ba33e5f"
+    },
+    "project-planning": {
+      "source": "athola/claude-night-market",
+      "sourceType": "github",
+      "skillPath": "plugins/attune/skills/project-planning/SKILL.md",
+      "computedHash": "64e031f96b2afc93f5bc5603f1bd2467ac5955c4f1c59da5ce5f00a22600895e"
+    }
+  }
+}
