@@ -1,6 +1,40 @@
+"use client";
+
+import { useState } from "react";
 import { mockYamlText } from "@/lib/mock-data";
 
 export default function Home() {
+  const [statusMessage, setStatusMessage] = useState("");
+
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(mockYamlText);
+      setStatusMessage("已复制 YAML 到剪贴板。");
+    } catch {
+      setStatusMessage("复制失败，请手动选择 YAML 文本复制。");
+    }
+  }
+
+  function handleDownload() {
+    try {
+      const blob = new Blob([mockYamlText], {
+        type: "text/yaml;charset=utf-8",
+      });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+
+      link.href = url;
+      link.download = "novel2script-mock.yaml";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(url);
+      setStatusMessage("已下载 YAML 文件。");
+    } catch {
+      setStatusMessage("下载失败，请稍后重试。");
+    }
+  }
+
   return (
     <main className="min-h-screen bg-[#f7f3ec] px-5 py-8 text-[#24211d] sm:px-8 lg:px-12">
       <section className="mx-auto flex max-w-5xl flex-col gap-6">
@@ -17,6 +51,34 @@ export default function Home() {
             生成能力。
           </p>
         </div>
+
+        <div className="flex flex-col gap-3 border border-[#d8cbb8] bg-[#fffaf2] p-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm leading-6 text-[#5f584f]">
+            当前展示的是 Mock YAML，可先复制或下载，后续 PR 再加入预览和校验。
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={handleCopy}
+              className="border border-[#8c6a3f] bg-[#24211d] px-4 py-2 text-sm font-semibold text-[#fffaf2] transition-colors hover:bg-[#3a332b]"
+            >
+              复制 YAML
+            </button>
+            <button
+              type="button"
+              onClick={handleDownload}
+              className="border border-[#8c6a3f] bg-[#fffaf2] px-4 py-2 text-sm font-semibold text-[#24211d] transition-colors hover:bg-[#efe2cf]"
+            >
+              下载 YAML
+            </button>
+          </div>
+        </div>
+
+        {statusMessage ? (
+          <p className="border border-[#d8cbb8] bg-white px-4 py-3 text-sm text-[#5f584f]">
+            {statusMessage}
+          </p>
+        ) : null}
 
         <pre className="max-h-[70vh] overflow-auto border border-[#d8cbb8] bg-[#fffaf2] p-5 text-sm leading-6 text-[#24211d] shadow-sm">
           <code>{mockYamlText}</code>
