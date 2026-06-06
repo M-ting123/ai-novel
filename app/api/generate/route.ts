@@ -1,7 +1,8 @@
-import { mockYamlText } from "@/lib/mock-data";
+import { load } from "js-yaml";
+import { mockScriptData, mockYamlText } from "@/lib/mock-data";
 
 const DEEPSEEK_CHAT_URL = "https://api.deepseek.com/chat/completions";
-const DEFAULT_MODEL = "deepseek-chat";
+const DEFAULT_MODEL = "deepseek-v4-flash";
 const REQUEST_TIMEOUT_MS = 60000;
 
 export const maxDuration = 60;
@@ -12,6 +13,46 @@ type GenerateRequestBody = {
   strategy?: string;
   useMock?: boolean;
 };
+
+type ParseStatus = "success" | "failed";
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function parseYamlText(yamlText: string): {
+  parsedData: Record<string, unknown> | null;
+  parseStatus: ParseStatus;
+} {
+  try {
+    const parsedData = load(normalizeYamlText(yamlText));
+
+    if (!isRecord(parsedData)) {
+      return {
+        parsedData: null,
+        parseStatus: "failed",
+      };
+    }
+
+    return {
+      parsedData,
+      parseStatus: "success",
+    };
+  } catch {
+    return {
+      parsedData: null,
+      parseStatus: "failed",
+    };
+  }
+}
+
+function normalizeYamlText(yamlText: string) {
+  return yamlText
+    .trim()
+    .replace(/^```(?:yaml|yml)?\s*/i, "")
+    .replace(/```$/i, "")
+    .trim();
+}
 
 function buildPrompt({
   novelText,
@@ -32,10 +73,19 @@ YAML 结构要求：
 ${novelText}`;
 }
 
-function mockResponse(reason: string, status = 200) {
+function mockResponse(
+  reason: string,
+  status = 200,
+  parseStatus: ParseStatus = "success",
+) {
+  const parsedMock = parseYamlText(mockYamlText);
+
   return Response.json(
     {
       yamlText: mockYamlText,
+      parsedData: parsedMock.parsedData ?? mockScriptData,
+      parseStatus:
+        parseStatus === "failed" ? parseStatus : parsedMock.parseStatus,
       usedMock: true,
       message: reason,
     },
@@ -73,17 +123,22 @@ export async function POST(request: Request) {
   }
 
   if (!novelText) {
-    return mockResponse("输入为空，已自动降级为 Mock 示例。", 400);
+    return mockResponse("输入为空，已自动降级为 Mock 示例。", 400, "failed");
   }
 
   const apiKey = process.env.DEEPSEEK_API_KEY;
 
   if (!apiKey) {
-    return mockResponse("未配置 DEEPSEEK_API_KEY，已自动降级为 Mock 示例。");
+    return mockResponse(
+      "未配置 DEEPSEEK_API_KEY，已自动降级为 Mock 示例。",
+      200,
+      "failed",
+    );
   }
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
+  const model = process.env.DEEPSEEK_MODEL ?? DEFAULT_MODEL;
 
   try {
     const response = await fetch(DEEPSEEK_CHAT_URL, {
@@ -93,7 +148,7 @@ export async function POST(request: Request) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: process.env.DEEPSEEK_MODEL ?? DEFAULT_MODEL,
+        model,
         messages: [
           {
             role: "system",
@@ -106,25 +161,48 @@ export async function POST(request: Request) {
           },
         ],
         temperature: 0.2,
-        max_tokens: 2500,
+        max_tokens: 4000,
+        ...(model.startsWith("deepseek-v4")
+          ? { thinking: { type: "disabled" } }
+          : {}),
         stream: false,
       }),
       signal: controller.signal,
     });
 
     if (!response.ok) {
-      return mockResponse("AI API 调用失败，已自动降级为 Mock 示例。");
+      return mockResponse(
+        "AI API 调用失败，已自动降级为 Mock 示例。",
+        200,
+        "failed",
+      );
     }
 
     const payload = (await response.json()) as unknown;
     const yamlText = extractTextFromResponse(payload).trim();
 
     if (!yamlText) {
-      return mockResponse("AI 返回内容为空，已自动降级为 Mock 示例。");
+      return mockResponse(
+        "AI 没有返回可解析的 YAML 正文，已自动降级为 Mock 示例。",
+        200,
+        "failed",
+      );
+    }
+
+    const parsedResult = parseYamlText(yamlText);
+
+    if (parsedResult.parseStatus === "failed") {
+      return mockResponse(
+        "AI YAML 解析失败，已自动降级为 Mock 示例。",
+        200,
+        "failed",
+      );
     }
 
     return Response.json({
       yamlText,
+      parsedData: parsedResult.parsedData,
+      parseStatus: parsedResult.parseStatus,
       usedMock: false,
       message: "AI YAML 生成完成。",
     });
@@ -134,7 +212,7 @@ export async function POST(request: Request) {
         ? "AI API 60 秒无响应，已自动降级为 Mock 示例。"
         : "AI API 请求异常，已自动降级为 Mock 示例。";
 
-    return mockResponse(message);
+    return mockResponse(message, 200, "failed");
   } finally {
     clearTimeout(timeout);
   }
