@@ -18,7 +18,9 @@ type ParseStatus = "idle" | "success" | "failed";
 export default function Home() {
   const [statusMessage, setStatusMessage] = useState("");
   const [parseStatus, setParseStatus] = useState<ParseStatus>("idle");
-  const [, setParsedData] = useState<unknown>(mockScriptData);
+  const [validationData, setValidationData] = useState<unknown>(mockScriptData);
+  const [validationSource, setValidationSource] = useState("Mock 示例");
+  const [hasGenerated, setHasGenerated] = useState(false);
   const [novelText, setNovelText] = useState("");
   const [inputError, setInputError] = useState("");
   const [genre, setGenre] = useState<Genre>("通用");
@@ -32,7 +34,7 @@ export default function Home() {
       character.name,
     ]),
   );
-  const validationResults = validateSchema(mockScriptData);
+  const validationResults = validateSchema(validationData);
   const statusClassName =
     parseStatus === "success"
       ? "border-[#8fb88f] bg-[#f3fbf0] text-[#2f6b35]"
@@ -90,6 +92,7 @@ export default function Home() {
       setInputError("请输入小说文本，或点击“使用示例文本”。");
       setStatusMessage("");
       setParseStatus("idle");
+      setHasGenerated(false);
       return;
     }
 
@@ -97,6 +100,7 @@ export default function Home() {
       setInputError("章节不足：请至少输入 3 章内容。");
       setStatusMessage("");
       setParseStatus("idle");
+      setHasGenerated(false);
       return;
     }
 
@@ -124,19 +128,30 @@ export default function Home() {
         usedMock?: boolean;
         message?: string;
       };
+      const nextParseStatus = result.parseStatus ?? "failed";
+      const nextValidationData =
+        nextParseStatus === "success" ? result.parsedData : mockScriptData;
 
       setYamlText(result.yamlText ?? mockYamlText);
-      setParsedData(result.parsedData ?? mockScriptData);
-      setParseStatus(result.parseStatus ?? "failed");
+      setValidationData(nextValidationData ?? mockScriptData);
+      setValidationSource(
+        nextParseStatus === "success" && !result.usedMock
+          ? "AI 生成结果"
+          : "Mock 示例",
+      );
+      setParseStatus(nextParseStatus);
       setStatusMessage(
         result.message ??
           (result.usedMock ? "已返回 Mock YAML。" : "AI YAML 生成完成。"),
       );
+      setHasGenerated(true);
     } catch {
       setYamlText(mockYamlText);
-      setParsedData(mockScriptData);
+      setValidationData(mockScriptData);
+      setValidationSource("Mock 示例");
       setParseStatus("failed");
       setStatusMessage("生成请求失败，已自动降级为 Mock 示例。");
+      setHasGenerated(true);
     } finally {
       setIsGenerating(false);
     }
@@ -199,6 +214,7 @@ export default function Home() {
             <button
               type="button"
               onClick={handleCopy}
+              disabled={!hasGenerated}
               className="border border-[#8c6a3f] bg-[#24211d] px-4 py-2 text-sm font-semibold text-[#fffaf2] transition-colors hover:bg-[#3a332b]"
             >
               复制 YAML
@@ -206,6 +222,7 @@ export default function Home() {
             <button
               type="button"
               onClick={handleDownload}
+              disabled={!hasGenerated}
               className="border border-[#8c6a3f] bg-[#fffaf2] px-4 py-2 text-sm font-semibold text-[#24211d] transition-colors hover:bg-[#efe2cf]"
             >
               下载 YAML
@@ -226,59 +243,68 @@ export default function Home() {
           </p>
         ) : null}
 
-        <ValidationPanel results={validationResults} />
+        {hasGenerated ? (
+          <ValidationPanel
+            results={validationResults}
+            source={validationSource}
+          />
+        ) : null}
 
-        <section className="space-y-4">
-          <div className="border-b border-[#d8cbb8] pb-3">
-            <h2 className="text-2xl font-semibold text-[#24211d]">
-              剧本场景预览
-            </h2>
-            <p className="mt-2 text-sm leading-6 text-[#5f584f]">
-              当前展示剧本场景、人物、对白和动作；真实 AI 场景数据接入会在后续 PR 完成。
-            </p>
-          </div>
-          <div className="space-y-5">
-            {mockScriptData.script.scenes.map((scene) => (
-              <SceneCard
-                key={scene.id}
-                scene={scene}
-                characterNames={characterNames}
-              />
-            ))}
-          </div>
-        </section>
+        {hasGenerated ? (
+          <>
+            <section className="space-y-4">
+              <div className="border-b border-[#d8cbb8] pb-3">
+                <h2 className="text-2xl font-semibold text-[#24211d]">
+                  剧本场景预览
+                </h2>
+                <p className="mt-2 text-sm leading-6 text-[#5f584f]">
+                  当前展示剧本场景、人物、对白和动作；真实 AI 场景数据接入会在后续 PR 完成。
+                </p>
+              </div>
+              <div className="space-y-5">
+                {mockScriptData.script.scenes.map((scene) => (
+                  <SceneCard
+                    key={scene.id}
+                    scene={scene}
+                    characterNames={characterNames}
+                  />
+                ))}
+              </div>
+            </section>
 
-        <section className="space-y-4">
-          <div className="border-b border-[#d8cbb8] pb-3">
-            <h2 className="text-2xl font-semibold text-[#24211d]">
-              分镜预览
-            </h2>
-            <p className="mt-2 text-sm leading-6 text-[#5f584f]">
-              当前按场景分组展示基础分镜字段；真实 AI 分镜数据接入会在后续 PR 完成。
-            </p>
-          </div>
-          <div className="space-y-5">
-            {mockScriptData.script.scenes.map((scene) => (
-              <section
-                key={scene.id}
-                className="border border-[#d8cbb8] bg-[#fffaf2] p-5"
-              >
-                <h3 className="text-lg font-semibold text-[#24211d]">
-                  {scene.title}
-                </h3>
-                <div className="mt-4 grid gap-4 lg:grid-cols-2">
-                  {scene.shots.map((shot) => (
-                    <ShotCard key={shot.id} shot={shot} />
-                  ))}
-                </div>
-              </section>
-            ))}
-          </div>
-        </section>
+            <section className="space-y-4">
+              <div className="border-b border-[#d8cbb8] pb-3">
+                <h2 className="text-2xl font-semibold text-[#24211d]">
+                  分镜预览
+                </h2>
+                <p className="mt-2 text-sm leading-6 text-[#5f584f]">
+                  当前按场景分组展示基础分镜字段；真实 AI 分镜数据接入会在后续 PR 完成。
+                </p>
+              </div>
+              <div className="space-y-5">
+                {mockScriptData.script.scenes.map((scene) => (
+                  <section
+                    key={scene.id}
+                    className="border border-[#d8cbb8] bg-[#fffaf2] p-5"
+                  >
+                    <h3 className="text-lg font-semibold text-[#24211d]">
+                      {scene.title}
+                    </h3>
+                    <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                      {scene.shots.map((shot) => (
+                        <ShotCard key={shot.id} shot={shot} />
+                      ))}
+                    </div>
+                  </section>
+                ))}
+              </div>
+            </section>
 
-        <pre className="max-h-[70vh] overflow-auto border border-[#d8cbb8] bg-[#fffaf2] p-5 text-sm leading-6 text-[#24211d] shadow-sm">
-          <code>{yamlText}</code>
-        </pre>
+            <pre className="max-h-[70vh] overflow-auto border border-[#d8cbb8] bg-[#fffaf2] p-5 text-sm leading-6 text-[#24211d] shadow-sm">
+              <code>{yamlText}</code>
+            </pre>
+          </>
+        ) : null}
       </section>
     </main>
   );
