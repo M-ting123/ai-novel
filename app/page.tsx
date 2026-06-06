@@ -13,8 +13,12 @@ import { ValidationPanel } from "@/components/ValidationPanel";
 import { mockScriptData, mockYamlText, sampleNovelText } from "@/lib/mock-data";
 import { validateSchema } from "@/lib/validate-schema";
 
+type ParseStatus = "idle" | "success" | "failed";
+
 export default function Home() {
   const [statusMessage, setStatusMessage] = useState("");
+  const [parseStatus, setParseStatus] = useState<ParseStatus>("idle");
+  const [, setParsedData] = useState<unknown>(mockScriptData);
   const [novelText, setNovelText] = useState("");
   const [inputError, setInputError] = useState("");
   const [genre, setGenre] = useState<Genre>("通用");
@@ -29,6 +33,18 @@ export default function Home() {
     ]),
   );
   const validationResults = validateSchema(mockScriptData);
+  const statusClassName =
+    parseStatus === "success"
+      ? "border-[#8fb88f] bg-[#f3fbf0] text-[#2f6b35]"
+      : parseStatus === "failed"
+        ? "border-[#d59b9b] bg-[#fff4f4] text-[#9b2f2f]"
+        : "border-[#d8cbb8] bg-white text-[#5f584f]";
+  const parseStatusMessage =
+    parseStatus === "success"
+      ? "YAML 结构解析成功：服务器已把文本结果转成后续功能可使用的数据。"
+      : parseStatus === "failed"
+        ? "YAML 结构解析失败：当前已显示 Mock 示例，后续功能暂不能使用这次 AI 结果。"
+        : "";
 
   async function handleCopy() {
     try {
@@ -73,12 +89,14 @@ export default function Home() {
     if (!novelText.trim()) {
       setInputError("请输入小说文本，或点击“使用示例文本”。");
       setStatusMessage("");
+      setParseStatus("idle");
       return;
     }
 
     if (countChapters(novelText) < 3) {
       setInputError("章节不足：请至少输入 3 章内容。");
       setStatusMessage("");
+      setParseStatus("idle");
       return;
     }
 
@@ -101,17 +119,23 @@ export default function Home() {
       });
       const result = (await response.json()) as {
         yamlText?: string;
+        parsedData?: unknown;
+        parseStatus?: Exclude<ParseStatus, "idle">;
         usedMock?: boolean;
         message?: string;
       };
 
       setYamlText(result.yamlText ?? mockYamlText);
+      setParsedData(result.parsedData ?? mockScriptData);
+      setParseStatus(result.parseStatus ?? "failed");
       setStatusMessage(
         result.message ??
           (result.usedMock ? "已返回 Mock YAML。" : "AI YAML 生成完成。"),
       );
     } catch {
       setYamlText(mockYamlText);
+      setParsedData(mockScriptData);
+      setParseStatus("failed");
       setStatusMessage("生成请求失败，已自动降级为 Mock 示例。");
     } finally {
       setIsGenerating(false);
@@ -189,9 +213,16 @@ export default function Home() {
           </div>
         </div>
 
-        {statusMessage ? (
-          <p className="border border-[#d8cbb8] bg-white px-4 py-3 text-sm text-[#5f584f]">
-            {statusMessage}
+        {statusMessage || parseStatus !== "idle" ? (
+          <p className={`border px-4 py-3 text-sm ${statusClassName}`}>
+            {statusMessage ? (
+              <span className="block font-semibold">{statusMessage}</span>
+            ) : null}
+            {parseStatusMessage ? (
+              <span className={statusMessage ? "mt-1 block" : "block"}>
+                {parseStatusMessage}
+              </span>
+            ) : null}
           </p>
         ) : null}
 
@@ -203,7 +234,7 @@ export default function Home() {
               剧本场景预览
             </h2>
             <p className="mt-2 text-sm leading-6 text-[#5f584f]">
-              PR3 从 Mock TS object 读取 script.scenes，先展示场景、人物、对白和动作；分镜内容留到 PR4。
+              当前展示剧本场景、人物、对白和动作；真实 AI 场景数据接入会在后续 PR 完成。
             </p>
           </div>
           <div className="space-y-5">
@@ -223,7 +254,7 @@ export default function Home() {
               分镜预览
             </h2>
             <p className="mt-2 text-sm leading-6 text-[#5f584f]">
-              PR4 从 Mock TS object 读取 script.scenes[].shots，按场景分组展示基础分镜；这里只展示第一版 Schema 定义的基础分镜字段。
+              当前按场景分组展示基础分镜字段；真实 AI 分镜数据接入会在后续 PR 完成。
             </p>
           </div>
           <div className="space-y-5">
