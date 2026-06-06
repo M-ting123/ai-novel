@@ -133,6 +133,15 @@ export const mockScriptData = {
   },
 } as const;
 
+export const sampleNovelText = `第一章 雨夜来信
+林晚在深夜收到一封没有署名的信，信纸上只有父亲熟悉的字迹。信里写着：如果你看到这封信，就回旧宅找书房里的录音。
+
+第二章 旧宅密室
+林晚回到多年无人居住的林家旧宅，在书房书柜后发现一扇暗门。密室里放着一台旧录音机，里面传出父亲压低声音留下的线索。
+
+第三章 失踪真相
+录音指向一桩被家族隐藏多年的旧案。林晚意识到父亲并不是普通失踪，而是在失踪前试图把真相留给她。`;
+
 export const mockYamlText = `project:
   schema_version: "1.0"
   title: "雨夜旧宅改编短剧"
