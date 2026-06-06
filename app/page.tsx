@@ -1,14 +1,24 @@
 "use client";
 
 import { useState } from "react";
+import {
+  ConfigSelector,
+  type Genre,
+  type Strategy,
+} from "@/components/ConfigSelector";
+import { NovelInput } from "@/components/NovelInput";
 import { SceneCard } from "@/components/SceneCard";
 import { ShotCard } from "@/components/ShotCard";
 import { ValidationPanel } from "@/components/ValidationPanel";
-import { mockScriptData, mockYamlText } from "@/lib/mock-data";
+import { mockScriptData, mockYamlText, sampleNovelText } from "@/lib/mock-data";
 import { validateSchema } from "@/lib/validate-schema";
 
 export default function Home() {
   const [statusMessage, setStatusMessage] = useState("");
+  const [novelText, setNovelText] = useState("");
+  const [inputError, setInputError] = useState("");
+  const [genre, setGenre] = useState<Genre>("通用");
+  const [strategy, setStrategy] = useState<Strategy>("忠实改编");
   const characterNames = Object.fromEntries(
     mockScriptData.story_bible.characters.map((character) => [
       character.id,
@@ -46,6 +56,35 @@ export default function Home() {
     }
   }
 
+  function countChapters(text: string) {
+    return (text.match(/第.+?章/g) ?? []).length;
+  }
+
+  function handleUseSample() {
+    setNovelText(sampleNovelText);
+    setInputError("");
+    setStatusMessage("已填入示例文本。");
+  }
+
+  function handleGenerate() {
+    if (!novelText.trim()) {
+      setInputError("请输入小说文本，或点击“使用示例文本”。");
+      setStatusMessage("");
+      return;
+    }
+
+    if (countChapters(novelText) < 3) {
+      setInputError("章节不足：请至少输入 3 章内容。");
+      setStatusMessage("");
+      return;
+    }
+
+    setInputError("");
+    setStatusMessage(
+      `已按“${genre} / ${strategy}”配置生成 Mock 结果。PR6 暂不调用外部 AI API。`,
+    );
+  }
+
   return (
     <main className="min-h-screen bg-[#f7f3ec] px-5 py-8 text-[#24211d] sm:px-8 lg:px-12">
       <section className="mx-auto flex max-w-5xl flex-col gap-6">
@@ -63,11 +102,32 @@ export default function Home() {
           </p>
         </div>
 
+        <NovelInput
+          value={novelText}
+          onChange={setNovelText}
+          onUseSample={handleUseSample}
+          errorMessage={inputError}
+        />
+
+        <ConfigSelector
+          genre={genre}
+          strategy={strategy}
+          onGenreChange={setGenre}
+          onStrategyChange={setStrategy}
+        />
+
         <div className="flex flex-col gap-3 border border-[#d8cbb8] bg-[#fffaf2] p-4 sm:flex-row sm:items-center sm:justify-between">
           <p className="text-sm leading-6 text-[#5f584f]">
-            当前展示的是 Mock YAML，可先复制或下载，后续 PR 再加入预览和校验。
+            点击生成后继续返回 Mock YAML，真实 AI 调用留到 PR7。
           </p>
           <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={handleGenerate}
+              className="border border-[#8c6a3f] bg-[#7a4f2a] px-4 py-2 text-sm font-semibold text-[#fffaf2] transition-colors hover:bg-[#8b5b33]"
+            >
+              生成 Mock YAML
+            </button>
             <button
               type="button"
               onClick={handleCopy}
