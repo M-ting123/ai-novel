@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { SceneCard } from "@/components/SceneCard";
+import { ShotCard } from "@/components/ShotCard";
 import { mockScriptData, mockYamlText } from "@/lib/mock-data";
 
 export default function Home() {
@@ -103,6 +104,34 @@ export default function Home() {
                 scene={scene}
                 characterNames={characterNames}
               />
+            ))}
+          </div>
+        </section>
+
+        <section className="space-y-4">
+          <div className="border-b border-[#d8cbb8] pb-3">
+            <h2 className="text-2xl font-semibold text-[#24211d]">
+              分镜预览
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-[#5f584f]">
+              PR4 从 Mock TS object 读取 script.scenes[].shots，按场景分组展示基础分镜；这里只展示第一版 Schema 定义的基础分镜字段。
+            </p>
+          </div>
+          <div className="space-y-5">
+            {mockScriptData.script.scenes.map((scene) => (
+              <section
+                key={scene.id}
+                className="border border-[#d8cbb8] bg-[#fffaf2] p-5"
+              >
+                <h3 className="text-lg font-semibold text-[#24211d]">
+                  {scene.title}
+                </h3>
+                <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                  {scene.shots.map((shot) => (
+                    <ShotCard key={shot.id} shot={shot} />
+                  ))}
+                </div>
+              </section>
             ))}
           </div>
         </section>
