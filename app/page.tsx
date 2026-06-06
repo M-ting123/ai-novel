@@ -9,6 +9,10 @@ import {
 import { NovelInput } from "@/components/NovelInput";
 import { SceneCard, type ScenePreview } from "@/components/SceneCard";
 import { ShotCard, type ShotPreview } from "@/components/ShotCard";
+import {
+  StoryBiblePanel,
+  type StoryBiblePreview,
+} from "@/components/StoryBiblePanel";
 import { ValidationPanel } from "@/components/ValidationPanel";
 import { mockScriptData, mockYamlText, sampleNovelText } from "@/lib/mock-data";
 import { validateSchema } from "@/lib/validate-schema";
@@ -34,6 +38,18 @@ function getArray(value: unknown) {
 
 function getString(value: unknown) {
   return typeof value === "string" ? value : undefined;
+}
+
+function getFirstString(record: Record<string, unknown>, keys: string[]) {
+  for (const key of keys) {
+    const value = getString(record[key]);
+
+    if (value) {
+      return value;
+    }
+  }
+
+  return undefined;
 }
 
 function extractPreviewData(data: unknown): PreviewData {
@@ -91,6 +107,93 @@ function extractPreviewData(data: unknown): PreviewData {
   return { characterNames, scenes };
 }
 
+function extractStoryBible(data: unknown): StoryBiblePreview {
+  if (!isRecord(data)) {
+    return {
+      characters: [],
+      relationships: [],
+      worldbuilding: { rules: [], locations: [] },
+      keyEvents: [],
+    };
+  }
+
+  const storyBible = isRecord(data.story_bible) ? data.story_bible : {};
+  const worldbuilding = isRecord(storyBible.worldbuilding)
+    ? storyBible.worldbuilding
+    : {};
+  const characterNameMap = Object.fromEntries(
+    getArray(storyBible.characters)
+      .filter(isRecord)
+      .map((character) => [
+        getString(character.id) ?? "",
+        getString(character.name) ?? getString(character.id) ?? "",
+      ])
+      .filter(([id, name]) => id && name),
+  );
+  const getCharacterLabel = (characterId: string | undefined) =>
+    characterId ? characterNameMap[characterId] ?? characterId : undefined;
+
+  return {
+    characters: getArray(storyBible.characters)
+      .filter(isRecord)
+      .map((character) => ({
+        id: getString(character.id),
+        name: getString(character.name),
+        role: getString(character.role),
+        personality: getFirstString(character, [
+          "personality",
+          "traits",
+          "character",
+          "性格",
+        ]),
+        goal: getFirstString(character, [
+          "goal",
+          "motivation",
+          "objective",
+          "目标",
+        ]),
+      })),
+    relationships: getArray(storyBible.relationships)
+      .filter(isRecord)
+      .map((relationship) => ({
+        from: getCharacterLabel(getString(relationship.from)),
+        to: getCharacterLabel(getString(relationship.to)),
+        type: getFirstString(relationship, ["type", "relation", "关系"]),
+        description: getFirstString(relationship, [
+          "description",
+          "summary",
+          "说明",
+        ]),
+      })),
+    worldbuilding: {
+      setting: getFirstString(worldbuilding, [
+        "setting",
+        "background",
+        "world",
+        "背景",
+      ]),
+      rules: [
+        ...getArray(worldbuilding.rules),
+        ...getArray(worldbuilding.mechanics),
+      ].filter((rule): rule is string => typeof rule === "string"),
+      locations: [
+        ...getArray(worldbuilding.locations),
+        ...getArray(worldbuilding.places),
+      ].filter((location): location is string => typeof location === "string"),
+      tone: getFirstString(worldbuilding, ["tone", "mood", "style", "基调"]),
+    },
+    keyEvents: [...getArray(storyBible.key_events), ...getArray(storyBible.events)]
+      .filter(isRecord)
+      .map((event) => ({
+        id: getString(event.id),
+        summary: getFirstString(event, ["summary", "description", "event"]),
+        characters: getArray(event.characters).filter(
+          (character): character is string => typeof character === "string",
+        ).map((character) => getCharacterLabel(character) ?? character),
+      })),
+  };
+}
+
 export default function Home() {
   const [statusMessage, setStatusMessage] = useState("");
   const [parseStatus, setParseStatus] = useState<ParseStatus>("idle");
@@ -106,6 +209,7 @@ export default function Home() {
   const [useMock, setUseMock] = useState(true);
   const validationResults = validateSchema(validationData);
   const previewData = extractPreviewData(validationData);
+  const storyBible = extractStoryBible(validationData);
   const statusClassName =
     parseStatus === "success"
       ? "border-[#8fb88f] bg-[#f3fbf0] text-[#2f6b35]"
@@ -329,6 +433,8 @@ export default function Home() {
 
         {hasGenerated ? (
           <>
+            <StoryBiblePanel storyBible={storyBible} />
+
             <section className="space-y-4">
               <div className="border-b border-[#d8cbb8] pb-3">
                 <h2 className="text-2xl font-semibold text-[#24211d]">
