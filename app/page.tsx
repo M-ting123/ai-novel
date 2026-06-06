@@ -3,7 +3,9 @@
 import { useState } from "react";
 import { SceneCard } from "@/components/SceneCard";
 import { ShotCard } from "@/components/ShotCard";
+import { ValidationPanel } from "@/components/ValidationPanel";
 import { mockScriptData, mockYamlText } from "@/lib/mock-data";
+import { validateSchema } from "@/lib/validate-schema";
 
 export default function Home() {
   const [statusMessage, setStatusMessage] = useState("");
@@ -13,6 +15,7 @@ export default function Home() {
       character.name,
     ]),
   );
+  const validationResults = validateSchema(mockScriptData);
 
   async function handleCopy() {
     try {
@@ -87,6 +90,8 @@ export default function Home() {
             {statusMessage}
           </p>
         ) : null}
+
+        <ValidationPanel results={validationResults} />
 
         <section className="space-y-4">
           <div className="border-b border-[#d8cbb8] pb-3">
