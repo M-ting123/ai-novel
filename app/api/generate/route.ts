@@ -47,11 +47,19 @@ function parseYamlText(yamlText: string): {
 }
 
 function normalizeYamlText(yamlText: string) {
-  return yamlText
+  const cleanedText = yamlText
     .trim()
     .replace(/^```(?:yaml|yml)?\s*/i, "")
     .replace(/```$/i, "")
     .trim();
+
+  const yamlStart = cleanedText.indexOf("project:");
+
+  if (yamlStart >= 0) {
+    return cleanedText.slice(yamlStart).trim();
+  }
+
+  return cleanedText;
 }
 
 function buildPrompt({
@@ -62,11 +70,18 @@ function buildPrompt({
   return `把以下小说文本改编为短剧剧本 YAML。只输出纯 YAML，不要 Markdown 代码块和额外解释。
 
 YAML 结构要求：
+- 输出必须是可被 js-yaml 解析的完整 YAML；不要输出 Markdown、解释文字、注释或省略号
+- 如果小说文本很长，只选择最关键的 3 个场景，不要覆盖全文
 - 顶层: project(含schema_version/title/created_at/language), source(含input_type/chapter_count/chapters), story_bible(含characters/relationships/worldbuilding/key_events), adaptation(含genre/strategy/output_mode), script(含scenes), metadata(含validation_status/warnings/source_refs)
+- 每个 character 必须包含 id/name/role/personality/goal，personality 写性格，goal 写人物目标
+- 每个 relationship 必须包含 from/to/type/description
+- worldbuilding 必须包含 setting/rules/locations/tone，setting 写故事背景，tone 写整体基调
+- 每个 key_event 必须包含 id/summary/characters/source_refs，summary 写具体事件
 - 每个scene: id/title/location/time/summary/characters/shots/dialogues/actions/source_refs
 - 每个 dialogue 必须包含 character 和 text，text 必须是具体台词，不要只写人物名
 - 每个 action 必须包含 text，text 必须是具体动作描述
 - 每个shot: id/visual/camera/action_summary/dialogue_summary
+- script.scenes 最多 3 个；每个 scene 的 shots 最多 2 个，dialogues 最多 3 条，actions 最多 3 条
 - 每个 key_event 必须包含 source_refs，例如 source_refs: ["CH001"]
 - 每个 scene 必须包含 source_refs，例如 source_refs: ["CH001", "CH002"]
 - source_refs 必须引用 source.chapters 中存在的章节 id；不明确时写入 metadata.warnings，不要省略字段
