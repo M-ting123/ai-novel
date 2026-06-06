@@ -1,10 +1,17 @@
 "use client";
 
 import { useState } from "react";
-import { mockYamlText } from "@/lib/mock-data";
+import { SceneCard } from "@/components/SceneCard";
+import { mockScriptData, mockYamlText } from "@/lib/mock-data";
 
 export default function Home() {
   const [statusMessage, setStatusMessage] = useState("");
+  const characterNames = Object.fromEntries(
+    mockScriptData.story_bible.characters.map((character) => [
+      character.id,
+      character.name,
+    ]),
+  );
 
   async function handleCopy() {
     try {
@@ -79,6 +86,26 @@ export default function Home() {
             {statusMessage}
           </p>
         ) : null}
+
+        <section className="space-y-4">
+          <div className="border-b border-[#d8cbb8] pb-3">
+            <h2 className="text-2xl font-semibold text-[#24211d]">
+              剧本场景预览
+            </h2>
+            <p className="mt-2 text-sm leading-6 text-[#5f584f]">
+              PR3 从 Mock TS object 读取 script.scenes，先展示场景、人物、对白和动作；分镜内容留到 PR4。
+            </p>
+          </div>
+          <div className="space-y-5">
+            {mockScriptData.script.scenes.map((scene) => (
+              <SceneCard
+                key={scene.id}
+                scene={scene}
+                characterNames={characterNames}
+              />
+            ))}
+          </div>
+        </section>
 
         <pre className="max-h-[70vh] overflow-auto border border-[#d8cbb8] bg-[#fffaf2] p-5 text-sm leading-6 text-[#24211d] shadow-sm">
           <code>{mockYamlText}</code>
