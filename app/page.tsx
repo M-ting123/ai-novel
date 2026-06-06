@@ -19,6 +19,9 @@ export default function Home() {
   const [inputError, setInputError] = useState("");
   const [genre, setGenre] = useState<Genre>("通用");
   const [strategy, setStrategy] = useState<Strategy>("忠实改编");
+  const [yamlText, setYamlText] = useState(mockYamlText);
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [useMock, setUseMock] = useState(true);
   const characterNames = Object.fromEntries(
     mockScriptData.story_bible.characters.map((character) => [
       character.id,
@@ -29,7 +32,7 @@ export default function Home() {
 
   async function handleCopy() {
     try {
-      await navigator.clipboard.writeText(mockYamlText);
+      await navigator.clipboard.writeText(yamlText);
       setStatusMessage("已复制 YAML 到剪贴板。");
     } catch {
       setStatusMessage("复制失败，请手动选择 YAML 文本复制。");
@@ -38,7 +41,7 @@ export default function Home() {
 
   function handleDownload() {
     try {
-      const blob = new Blob([mockYamlText], {
+      const blob = new Blob([yamlText], {
         type: "text/yaml;charset=utf-8",
       });
       const url = URL.createObjectURL(blob);
@@ -66,7 +69,7 @@ export default function Home() {
     setStatusMessage("已填入示例文本。");
   }
 
-  function handleGenerate() {
+  async function handleGenerate() {
     if (!novelText.trim()) {
       setInputError("请输入小说文本，或点击“使用示例文本”。");
       setStatusMessage("");
@@ -80,9 +83,39 @@ export default function Home() {
     }
 
     setInputError("");
-    setStatusMessage(
-      `已按“${genre} / ${strategy}”配置生成 Mock 结果。PR6 暂不调用外部 AI API。`,
-    );
+    setStatusMessage("");
+    setIsGenerating(true);
+
+    try {
+      const response = await fetch("/api/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          novelText,
+          genre,
+          strategy,
+          useMock,
+        }),
+      });
+      const result = (await response.json()) as {
+        yamlText?: string;
+        usedMock?: boolean;
+        message?: string;
+      };
+
+      setYamlText(result.yamlText ?? mockYamlText);
+      setStatusMessage(
+        result.message ??
+          (result.usedMock ? "已返回 Mock YAML。" : "AI YAML 生成完成。"),
+      );
+    } catch {
+      setYamlText(mockYamlText);
+      setStatusMessage("生成请求失败，已自动降级为 Mock 示例。");
+    } finally {
+      setIsGenerating(false);
+    }
   }
 
   return (
@@ -117,16 +150,27 @@ export default function Home() {
         />
 
         <div className="flex flex-col gap-3 border border-[#d8cbb8] bg-[#fffaf2] p-4 sm:flex-row sm:items-center sm:justify-between">
-          <p className="text-sm leading-6 text-[#5f584f]">
-            点击生成后继续返回 Mock YAML，真实 AI 调用留到 PR7。
-          </p>
+          <div className="space-y-2">
+            <p className="text-sm leading-6 text-[#5f584f]">
+              点击生成后调用 API Route；未配置 API key、网络失败或长时间无响应时会自动降级为 Mock YAML。
+            </p>
+            <label className="flex items-center gap-2 text-sm font-semibold text-[#24211d]">
+              <input
+                type="checkbox"
+                checked={useMock}
+                onChange={(event) => setUseMock(event.target.checked)}
+              />
+              使用 Mock 示例
+            </label>
+          </div>
           <div className="flex flex-wrap gap-3">
             <button
               type="button"
               onClick={handleGenerate}
+              disabled={isGenerating}
               className="border border-[#8c6a3f] bg-[#7a4f2a] px-4 py-2 text-sm font-semibold text-[#fffaf2] transition-colors hover:bg-[#8b5b33]"
             >
-              生成 Mock YAML
+              {isGenerating ? "生成中..." : "生成 YAML"}
             </button>
             <button
               type="button"
@@ -202,7 +246,7 @@ export default function Home() {
         </section>
 
         <pre className="max-h-[70vh] overflow-auto border border-[#d8cbb8] bg-[#fffaf2] p-5 text-sm leading-6 text-[#24211d] shadow-sm">
-          <code>{mockYamlText}</code>
+          <code>{yamlText}</code>
         </pre>
       </section>
     </main>
