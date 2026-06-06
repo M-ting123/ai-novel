@@ -3,9 +3,9 @@ import { mockScriptData, mockYamlText } from "@/lib/mock-data";
 
 const DEEPSEEK_CHAT_URL = "https://api.deepseek.com/chat/completions";
 const DEFAULT_MODEL = "deepseek-v4-flash";
-const REQUEST_TIMEOUT_MS = 60000;
+const REQUEST_TIMEOUT_MS = 120000;
 
-export const maxDuration = 60;
+export const maxDuration = 120;
 
 type GenerateRequestBody = {
   novelText?: string;
@@ -64,6 +64,8 @@ function buildPrompt({
 YAML 结构要求：
 - 顶层: project(含schema_version/title/created_at/language), source(含input_type/chapter_count/chapters), story_bible(含characters/relationships/worldbuilding/key_events), adaptation(含genre/strategy/output_mode), script(含scenes), metadata(含validation_status/warnings/source_refs)
 - 每个scene: id/title/location/time/summary/characters/shots/dialogues/actions/source_refs
+- 每个 dialogue 必须包含 character 和 text，text 必须是具体台词，不要只写人物名
+- 每个 action 必须包含 text，text 必须是具体动作描述
 - 每个shot: id/visual/camera/action_summary/dialogue_summary
 - 每个 key_event 必须包含 source_refs，例如 source_refs: ["CH001"]
 - 每个 scene 必须包含 source_refs，例如 source_refs: ["CH001", "CH002"]
@@ -211,7 +213,7 @@ export async function POST(request: Request) {
   } catch (error) {
     const message =
       error instanceof Error && error.name === "AbortError"
-        ? "AI API 60 秒无响应，已自动降级为 Mock 示例。"
+        ? "AI API 120 秒无响应，已自动降级为 Mock 示例。"
         : "AI API 请求异常，已自动降级为 Mock 示例。";
 
     return mockResponse(message, 200, "failed");
