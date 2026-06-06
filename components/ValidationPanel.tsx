@@ -2,9 +2,10 @@ import type { ValidationResult } from "@/lib/validate-schema";
 
 type ValidationPanelProps = {
   results: readonly ValidationResult[];
+  source: string;
 };
 
-export function ValidationPanel({ results }: ValidationPanelProps) {
+export function ValidationPanel({ results, source }: ValidationPanelProps) {
   const passedCount = results.filter((result) => result.passed).length;
   const failedResults = results.filter((result) => !result.passed);
 
@@ -15,7 +16,8 @@ export function ValidationPanel({ results }: ValidationPanelProps) {
           Schema 校验结果
         </h2>
         <p className="mt-2 text-sm leading-6 text-[#5f584f]">
-          通过 {passedCount} 条 / 失败 {failedResults.length} 条
+          当前校验：{source}。通过 {passedCount} 条 / 失败{" "}
+          {failedResults.length} 条
         </p>
       </div>
 
@@ -23,7 +25,11 @@ export function ValidationPanel({ results }: ValidationPanelProps) {
         {results.map((result) => (
           <li
             key={result.rule}
-            className="border border-[#d8cbb8] bg-white p-3 text-sm"
+            className={`border p-3 text-sm ${
+              result.passed
+                ? "border-[#c9d8b8] bg-white"
+                : "border-[#b66a5c] bg-[#fff8f5]"
+            }`}
           >
             <div className="flex items-center justify-between gap-3">
               <p className="font-semibold text-[#24211d]">
@@ -32,11 +38,12 @@ export function ValidationPanel({ results }: ValidationPanelProps) {
               <span
                 className={
                   result.passed
-                    ? "border border-[#7c9b5f] px-2 py-1 text-xs font-semibold text-[#4d6b35]"
-                    : "border border-[#b66a5c] px-2 py-1 text-xs font-semibold text-[#8a3328]"
+                    ? "flex h-7 w-7 items-center justify-center border border-[#7c9b5f] text-base font-semibold text-[#4d6b35]"
+                    : "flex h-7 w-7 items-center justify-center border border-[#b66a5c] text-base font-semibold text-[#8a3328]"
                 }
+                aria-label={result.passed ? "通过" : "失败"}
               >
-                {result.passed ? "通过" : "失败"}
+                {result.passed ? "✓" : "×"}
               </span>
             </div>
             <p className="mt-2 leading-6 text-[#5f584f]">{result.message}</p>
