@@ -22,7 +22,7 @@ export function ConfigSelector({
       <div className="border-b border-[#d8cbb8] pb-4">
         <h2 className="text-2xl font-semibold text-[#24211d]">改编配置</h2>
         <p className="mt-2 text-sm leading-6 text-[#5f584f]">
-          PR6 只保存配置选择并继续返回 Mock 结果，真实 AI 生成留到 PR7。
+          选择题材和改编策略，用于调整生成结果的风格和取舍。
         </p>
       </div>
 
