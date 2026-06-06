@@ -42,6 +42,14 @@ type ScriptData = {
   };
 };
 
+function asScriptData(data: unknown): ScriptData {
+  if (typeof data === "object" && data !== null && !Array.isArray(data)) {
+    return data as ScriptData;
+  }
+
+  return {};
+}
+
 function hasTopLevelModules(data: ScriptData) {
   return [
     data.project,
@@ -74,9 +82,18 @@ function hasSourceRefs(value: { source_refs?: SourceRefList }) {
   return Array.isArray(value.source_refs) && value.source_refs.length > 0;
 }
 
-export function validateSchema(data: ScriptData): ValidationResult[] {
-  const scenes = data.script?.scenes ?? [];
-  const keyEvents = data.story_bible?.key_events ?? [];
+function hasShotPreviewFields(shot: unknown) {
+  return typeof shot === "object" && shot !== null && "id" in shot && "visual" in shot;
+}
+
+export function validateSchema(input: unknown): ValidationResult[] {
+  const data = asScriptData(input);
+  const scenes = Array.isArray(data.script?.scenes)
+    ? data.script.scenes
+    : [];
+  const keyEvents = Array.isArray(data.story_bible?.key_events)
+    ? data.story_bible.key_events
+    : [];
   const sceneAndEventRefs = [...keyEvents, ...scenes];
 
   return [
@@ -120,12 +137,8 @@ export function validateSchema(data: ScriptData): ValidationResult[] {
       rule: "R6",
       field: "script.scenes[].shots",
       passed: scenes.every((scene) =>
-        (scene.shots ?? []).every(
-          (shot) =>
-            typeof shot === "object" &&
-            shot !== null &&
-            "id" in shot &&
-            "visual" in shot,
+        (Array.isArray(scene.shots) ? scene.shots : []).every(
+          hasShotPreviewFields,
         ),
       ),
       message:
@@ -143,7 +156,7 @@ export function validateSchema(data: ScriptData): ValidationResult[] {
       passed:
         sceneAndEventRefs.length > 0 && sceneAndEventRefs.every(hasSourceRefs),
       message:
-        "关键事件和场景应包含 source_refs；没有来源时应在 warnings 中提示。",
+        "关键事件和场景必须带 source_refs，用来说明内容来自哪些章节。",
     },
   ];
 }

@@ -65,7 +65,9 @@ YAML 结构要求：
 - 顶层: project(含schema_version/title/created_at/language), source(含input_type/chapter_count/chapters), story_bible(含characters/relationships/worldbuilding/key_events), adaptation(含genre/strategy/output_mode), script(含scenes), metadata(含validation_status/warnings/source_refs)
 - 每个scene: id/title/location/time/summary/characters/shots/dialogues/actions/source_refs
 - 每个shot: id/visual/camera/action_summary/dialogue_summary
-- source_refs 标记来源章节，不明确时写入 warnings 不编造
+- 每个 key_event 必须包含 source_refs，例如 source_refs: ["CH001"]
+- 每个 scene 必须包含 source_refs，例如 source_refs: ["CH001", "CH002"]
+- source_refs 必须引用 source.chapters 中存在的章节 id；不明确时写入 metadata.warnings，不要省略字段
 
 题材: ${genre}  策略: ${strategy}
 
