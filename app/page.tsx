@@ -271,6 +271,7 @@ export default function Home() {
   const [inputError, setInputError] = useState("");
   const [genre, setGenre] = useState<Genre>("通用");
   const [strategy, setStrategy] = useState<Strategy>("忠实改编");
+  const [revisionInstruction, setRevisionInstruction] = useState("");
   const [yamlText, setYamlText] = useState(mockYamlText);
   const [isGenerating, setIsGenerating] = useState(false);
   const [useMock, setUseMock] = useState(false);
@@ -378,6 +379,7 @@ export default function Home() {
           novelText: text,
           genre,
           strategy,
+          revisionInstruction,
           useMock,
         }),
       });
@@ -826,6 +828,28 @@ export default function Home() {
               }
             </div>
           ) : null}
+
+          <div className="rounded-2xl border border-[#eceae6] bg-[#faf9f6] p-3">
+            <label className="block text-sm font-semibold text-[#5f5b52]">
+              后续修改要求
+              <textarea
+                value={revisionInstruction}
+                onChange={(event) => setRevisionInstruction(event.target.value)}
+                className="mt-2 min-h-28 w-full resize-y rounded-2xl border border-[#e3ded2] bg-white px-3 py-3 text-sm leading-6 text-[#1f1f1f] outline-none transition-colors placeholder:text-[#aaa397] focus:border-[#9a7b4f]"
+                placeholder="例如：加强冲突，减少旁白，前三场更适合短视频开头..."
+              />
+            </label>
+            <button
+              type="button"
+              onClick={() => {
+                void handleGenerate();
+              }}
+              disabled={isGenerating}
+              className="mt-3 w-full rounded-full border border-[#9a7b4f] bg-[#f3efe6] px-4 py-2 text-sm font-semibold text-[#5f5b52] transition-all hover:-translate-y-0.5 hover:bg-[#e8decb] disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {isGenerating ? "提交中..." : "提交修改"}
+            </button>
+          </div>
         </aside>
 
         <div className="min-w-0">
