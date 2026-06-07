@@ -14,6 +14,7 @@ import {
   StoryBiblePanel,
   type StoryBiblePreview,
 } from "@/components/StoryBiblePanel";
+import { StartInputModal } from "@/components/StartInputModal";
 import { ValidationPanel } from "@/components/ValidationPanel";
 import { mockScriptData, mockYamlText, sampleNovelText } from "@/lib/mock-data";
 import { validateSchema } from "@/lib/validate-schema";
@@ -231,6 +232,7 @@ function extractStoryBible(data: unknown): StoryBiblePreview {
 
 export default function Home() {
   const [showWorkspace, setShowWorkspace] = useState(false);
+  const [showStartModal, setShowStartModal] = useState(false);
   const [activeFeatureIndex, setActiveFeatureIndex] = useState(0);
   const [statusMessage, setStatusMessage] = useState("");
   const [parseStatus, setParseStatus] = useState<ParseStatus>("idle");
@@ -243,7 +245,7 @@ export default function Home() {
   const [strategy, setStrategy] = useState<Strategy>("忠实改编");
   const [yamlText, setYamlText] = useState(mockYamlText);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [useMock, setUseMock] = useState(true);
+  const [useMock, setUseMock] = useState(false);
   const validationResults = validateSchema(validationData);
   const previewData = extractPreviewData(validationData);
   const storyBible = extractStoryBible(validationData);
@@ -322,8 +324,8 @@ export default function Home() {
     setStatusMessage("已填入示例文本。");
   }
 
-  async function handleGenerate() {
-    if (!novelText.trim()) {
+  async function handleGenerate(text = novelText) {
+    if (!text.trim()) {
       setInputError("请输入小说文本，或点击“使用示例文本”。");
       setStatusMessage("");
       setParseStatus("idle");
@@ -331,7 +333,7 @@ export default function Home() {
       return;
     }
 
-    if (countChapters(novelText) < 3) {
+    if (countChapters(text) < 3) {
       setInputError(
         "章节不足：请至少输入 3 章，支持“第一章”“第1章”“Chapter 1”或“1.”等格式。",
       );
@@ -352,7 +354,7 @@ export default function Home() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          novelText,
+          novelText: text,
           genre,
           strategy,
           useMock,
@@ -412,7 +414,10 @@ export default function Home() {
             </p>
             <button
               type="button"
-              onClick={() => setShowWorkspace(true)}
+              onClick={() => {
+                setInputError("");
+                setShowStartModal(true);
+              }}
               className="mt-8 border border-[#101820] bg-[#101820] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#24313d]"
             >
               开始
@@ -474,6 +479,32 @@ export default function Home() {
               </div>
             </div>
           </section>
+          {showStartModal ? (
+            <StartInputModal
+              value={novelText}
+              onChange={(value) => {
+                setNovelText(value);
+                setInputError("");
+              }}
+              onClose={() => {
+                setInputError("");
+                setShowStartModal(false);
+              }}
+              onGenerate={() => {
+                if (!novelText.trim()) {
+                  setInputError("请先输入小说文本，或上传 .txt 文件。");
+                  return;
+                }
+
+                setInputError("");
+                setShowStartModal(false);
+                setShowWorkspace(true);
+                void handleGenerate(novelText);
+              }}
+              onUseSample={handleUseSample}
+              errorMessage={inputError}
+            />
+          ) : null}
         </section>
       </main>
     );
@@ -531,7 +562,9 @@ export default function Home() {
           <div className="flex flex-wrap gap-3">
             <button
               type="button"
-              onClick={handleGenerate}
+              onClick={() => {
+                void handleGenerate();
+              }}
               disabled={isGenerating}
               className="border border-[#8c6a3f] bg-[#7a4f2a] px-4 py-2 text-sm font-semibold text-[#fffaf2] transition-colors hover:bg-[#8b5b33]"
             >
