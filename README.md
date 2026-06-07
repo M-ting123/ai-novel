@@ -1,4 +1,5 @@
 # 入戏
+demo视频链接：【凉凉凉～的作品】  https://v.douyin.com/cZFjDNf9kz8/ 07/20 Slc:/ :1pm B@T.Ym 
 
 小说转短剧剧本 YAML 的 72h MVP 项目。当前界面品牌名为 **入戏 InScene**。
 
