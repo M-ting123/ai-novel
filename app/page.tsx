@@ -614,34 +614,30 @@ export default function Home() {
                 </svg>
               </span>
               <span className="text-lg font-semibold tracking-tight text-[#1f1f1f]">
-                Novel2Script
+                入戏 InScene
               </span>
             </div>
 
             <button
               type="button"
-              onClick={() => {
-                setInputError("");
-                setShowStartModal(true);
-              }}
-              className="rounded-full bg-[#1f1f1f] px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-[#000000] hover:shadow-md"
+              className="rounded-full px-4 py-2 text-sm font-medium text-[#5f5b52] transition-colors hover:text-[#1f1f1f]"
             >
-              开始 →
+              登录
             </button>
           </header>
 
-          <section className="grid flex-1 items-center gap-8 lg:grid-cols-[0.9fr_1.1fr]">
-            <div className="py-6">
-              <p className="text-sm font-semibold text-[#9a7b4f]">
-                Novel2Script YAML Studio
-              </p>
-              <h1 className="mt-4 text-5xl font-bold leading-tight text-[#1f1f1f] sm:text-6xl text-balance">
-                文入剧中
+          <section className="flex flex-1 flex-col items-center justify-center gap-10 py-10 text-center">
+            <div className="flex max-w-2xl flex-col items-center">
+              <span className="inline-flex items-center rounded-full border border-[#ddd5c6] bg-[#f3efe6] px-4 py-1.5 text-xs font-semibold tracking-wide text-[#9a7b4f]">
+                小说转剧本工作台
+              </span>
+              <h1 className="mt-6 text-5xl font-bold leading-tight text-[#1f1f1f] sm:text-6xl text-balance">
+                让文字，自然入戏
               </h1>
-              <p className="mt-5 max-w-md text-base leading-8 text-[#5f5b52] sm:text-lg text-pretty">
+              <p className="mt-5 max-w-lg text-base leading-8 text-[#5f5b52] sm:text-lg text-pretty">
                 从章回到镜头，从文字到剧本，把小说内容转成可继续创作的结构化剧本 YAML。
               </p>
-              <div className="mt-7 flex flex-wrap gap-3 text-sm text-[#5f5b52]">
+              <div className="mt-7 flex flex-wrap items-center justify-center gap-3 text-sm text-[#5f5b52]">
                 <span className="rounded-full bg-[#e3ded2] px-3 py-1">
                   TXT 导入
                 </span>
@@ -659,13 +655,13 @@ export default function Home() {
                   setInputError("");
                   setShowStartModal(true);
                 }}
-                className="mt-8 rounded-full bg-[#1f1f1f] px-7 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-[#000000] hover:shadow-md"
+                className="mt-9 rounded-full bg-[#1f1f1f] px-8 py-3.5 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-[#000000] hover:shadow-md"
               >
-                开始学习
+                开始创作 →
               </button>
             </div>
 
-            <div className="rounded-3xl border border-[#e6e1d6] bg-white p-5 shadow-sm">
+            <div className="w-full max-w-xl rounded-3xl border border-[#e6e1d6] bg-white p-5 text-left shadow-sm">
               <div className="rounded-2xl bg-[#f7f5ef] p-5">
                 <div className="flex items-start justify-between gap-4">
                   <div>
