@@ -49,7 +49,7 @@ export function StoryBiblePanel({ storyBible }: StoryBiblePanelProps) {
         </p>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 2xl:grid-cols-2">
         <section className="border border-[#d8cbb8] bg-[#fffaf2] p-5">
           <h3 className="text-lg font-semibold text-[#24211d]">人物</h3>
           {storyBible.characters.length > 0 ? (
