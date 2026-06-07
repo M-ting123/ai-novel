@@ -31,6 +31,21 @@
 - js-yaml
 - DeepSeek Chat Completions API
 
+## 依赖安装
+
+运行前需要本地已安装 Node.js 和 npm。项目依赖已经写在 `package.json` 和 `package-lock.json` 中，进入项目目录后执行：
+
+```bash
+npm install
+```
+
+主要依赖包括：
+
+- `next` / `react` / `react-dom`：页面和 App Router
+- `tailwindcss` / `@tailwindcss/postcss`：样式
+- `js-yaml` / `@types/js-yaml`：YAML 解析和类型支持
+- `typescript` / `eslint` / `eslint-config-next`：类型检查和代码规范
+
 ## 项目结构
 
 ```
