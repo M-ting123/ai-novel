@@ -730,27 +730,46 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f6f7f8] text-[#1f2933]">
+    <main className="min-h-screen bg-[#f4f3f0] text-[#1f1f1f]">
       <section className="mx-auto grid max-w-[1440px] gap-5 px-5 py-5 sm:px-8 lg:grid-cols-[240px_minmax(0,1fr)_390px]">
-        <aside className="flex min-w-0 flex-col gap-4 border border-[#dde3e8] bg-white p-4">
+        <aside className="flex min-w-0 flex-col gap-4 rounded-3xl border border-[#eceae6] bg-white p-4 shadow-sm">
           <button
             type="button"
             onClick={() => setShowWorkspace(false)}
-            className="w-fit rounded-full border border-[#c8d3dc] bg-white px-4 py-2 text-sm font-semibold text-[#394552] transition-all hover:-translate-x-0.5 hover:bg-[#f1f5f8]"
+            className="flex w-fit items-center gap-1.5 rounded-full border border-[#e3ded2] bg-[#f7f5ef] px-4 py-2 text-sm font-semibold text-[#5f5b52] transition-all hover:-translate-x-0.5 hover:border-[#c4b894] hover:text-[#1f1f1f]"
           >
             ← 返回主页
           </button>
 
-          <div className="border-b border-[#dde3e8] pb-4">
-            <p className="text-sm font-semibold text-[#315f8a]">
-              Novel2Script
-            </p>
-            <h1 className="mt-1 text-xl font-semibold text-[#101820]">
-              YAML 生成工作台
-            </h1>
+          <div className="flex items-center gap-2.5 border-b border-[#eceae6] pb-4">
+            <span
+              aria-hidden="true"
+              className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1f1f1f] text-[#efece4]"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="3" y="4" width="18" height="16" rx="2.5" />
+                <path d="M3 8.5h18" />
+                <path d="M10 12.2v4.2l3.6-2.1-3.6-2.1Z" fill="currentColor" stroke="none" />
+              </svg>
+            </span>
+            <div>
+              <p className="text-sm font-semibold text-[#1f1f1f]">
+                入戏 <span className="text-[#9a7b4f]">InScene</span>
+              </p>
+              <p className="mt-0.5 text-xs text-[#8a857a]">YAML 生成工作台</p>
+            </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {statusCards.map((status) => (
               <button
                 key={status.id}
@@ -760,24 +779,35 @@ export default function Home() {
                     current === status.id ? null : status.id,
                   )
                 }
-                className={`w-full rounded-2xl border px-3 py-3 text-left text-sm transition-all hover:-translate-y-0.5 ${
+                className={`flex w-full items-center gap-2.5 rounded-2xl border px-3 py-3 text-left text-sm transition-all hover:-translate-y-0.5 ${
                   status.tone === "success"
-                    ? "border-[#b9dec0] bg-[#f3fbf0] text-[#2f6b35]"
+                    ? "border-[#cbe6cf] bg-[#f3fbf0] text-[#2f6b35]"
                     : status.tone === "error"
-                      ? "border-[#f0b8b0] bg-[#fff4f4] text-[#9b2f2f]"
-                      : "border-[#dde3e8] bg-[#fbfcfd] text-[#394552]"
+                      ? "border-[#f0c9c2] bg-[#fdf3f1] text-[#9b2f2f]"
+                      : "border-[#eceae6] bg-[#faf9f6] text-[#5f5b52]"
                 }`}
               >
-                <span className="block font-semibold">{status.label}</span>
-                <span className="mt-1 block text-xs opacity-80">
-                  点击查看详情
+                <span
+                  className={`h-2 w-2 shrink-0 rounded-full ${
+                    status.tone === "success"
+                      ? "bg-[#3c8a4b]"
+                      : status.tone === "error"
+                        ? "bg-[#c0584b]"
+                        : "bg-[#c2bcae]"
+                  }`}
+                />
+                <span className="min-w-0">
+                  <span className="block font-semibold">{status.label}</span>
+                  <span className="mt-0.5 block text-xs opacity-80">
+                    点击查看详情
+                  </span>
                 </span>
               </button>
             ))}
           </div>
 
           {selectedStatusDetail ? (
-            <div className="rounded-2xl border border-[#dde3e8] bg-[#fbfcfd] p-3 text-sm leading-6 text-[#394552]">
+            <div className="rounded-2xl border border-[#eceae6] bg-[#faf9f6] p-3 text-sm leading-6 text-[#5f5b52]">
               {
                 statusCards.find((status) => status.id === selectedStatusDetail)
                   ?.detail
@@ -788,27 +818,27 @@ export default function Home() {
 
         <div className="min-w-0">
           <section className="flex min-w-0 flex-col gap-4">
-            <div className="border border-[#dde3e8] bg-white p-5">
-              <div className="flex flex-col gap-3 border-b border-[#dde3e8] pb-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="rounded-3xl border border-[#eceae6] bg-white p-5 shadow-sm">
+              <div className="flex flex-col gap-3 border-b border-[#eceae6] pb-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <h2 className="text-xl font-semibold text-[#101820]">
+                  <h2 className="text-xl font-semibold text-[#1f1f1f]">
                     YAML 输出
                   </h2>
-                  <p className="mt-1 text-sm text-[#59636e]">
+                  <p className="mt-1 text-sm text-[#8a857a]">
                     生成结果会显示在这里，支持滚动查看完整结构。
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2 text-xs font-semibold">
-                  <span className="border border-[#c8d3dc] bg-[#fbfcfd] px-3 py-1 text-[#394552]">
+                  <span className="rounded-full border border-[#e3ded2] bg-[#f7f5ef] px-3 py-1 text-[#5f5b52]">
                     API：{apiStatusLabel}
                   </span>
                   <span
-                    className={`border px-3 py-1 ${
+                    className={`rounded-full border px-3 py-1 ${
                       hasGenerated && failedValidationCount === 0
-                        ? "border-[#8fb88f] bg-[#f3fbf0] text-[#2f6b35]"
+                        ? "border-[#cbe6cf] bg-[#f3fbf0] text-[#2f6b35]"
                         : hasGenerated
-                          ? "border-[#d59b9b] bg-[#fff4f4] text-[#9b2f2f]"
-                          : "border-[#c8d3dc] bg-[#fbfcfd] text-[#394552]"
+                          ? "border-[#f0c9c2] bg-[#fdf3f1] text-[#9b2f2f]"
+                          : "border-[#e3ded2] bg-[#f7f5ef] text-[#5f5b52]"
                     }`}
                   >
                     {validationLabel}
@@ -816,22 +846,22 @@ export default function Home() {
                 </div>
               </div>
 
-              <pre className="mt-4 max-h-[62vh] min-h-[52vh] overflow-auto border border-[#dde3e8] bg-[#fbfcfd] p-4 text-sm leading-6 text-[#101820]">
+              <pre className="mt-4 max-h-[62vh] min-h-[52vh] overflow-auto rounded-2xl border border-[#eceae6] bg-[#faf9f6] p-4 text-sm leading-6 text-[#1f1f1f]">
                 <code>{displayedYamlText}</code>
               </pre>
             </div>
 
-            <div className="border border-[#dde3e8] bg-white p-4">
+            <div className="rounded-3xl border border-[#eceae6] bg-white p-4 shadow-sm">
               <div className="grid gap-4 xl:grid-cols-[1fr_auto] xl:items-end">
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <label className="block text-sm font-semibold text-[#394552]">
+                  <label className="block text-sm font-semibold text-[#5f5b52]">
                     题材类型
                     <select
                       value={genre}
                       onChange={(event) =>
                         setGenre(event.target.value as Genre)
                       }
-                      className="mt-2 w-full border border-[#c8d3dc] bg-white px-3 py-2 text-sm text-[#101820] outline-none focus:border-[#315f8a]"
+                      className="mt-2 w-full rounded-xl border border-[#e3ded2] bg-white px-3 py-2 text-sm text-[#1f1f1f] outline-none focus:border-[#9a7b4f]"
                     >
                       {["悬疑", "都市", "玄幻", "言情", "通用"].map(
                         (option) => (
@@ -843,14 +873,14 @@ export default function Home() {
                     </select>
                   </label>
 
-                  <label className="block text-sm font-semibold text-[#394552]">
+                  <label className="block text-sm font-semibold text-[#5f5b52]">
                     改编策略
                     <select
                       value={strategy}
                       onChange={(event) =>
                         setStrategy(event.target.value as Strategy)
                       }
-                      className="mt-2 w-full border border-[#c8d3dc] bg-white px-3 py-2 text-sm text-[#101820] outline-none focus:border-[#315f8a]"
+                      className="mt-2 w-full rounded-xl border border-[#e3ded2] bg-white px-3 py-2 text-sm text-[#1f1f1f] outline-none focus:border-[#9a7b4f]"
                     >
                       {["忠实改编", "压缩改编", "冲突强化"].map((option) => (
                         <option key={option} value={option}>
@@ -868,7 +898,7 @@ export default function Home() {
                       void handleGenerate();
                     }}
                     disabled={isGenerating}
-                    className="border border-[#101820] bg-[#101820] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#24313d] disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-full border border-[#1f1f1f] bg-[#1f1f1f] px-5 py-2 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-[#000000] disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {isGenerating ? "生成中..." : "生成 YAML"}
                   </button>
@@ -876,7 +906,7 @@ export default function Home() {
                     type="button"
                     onClick={handleCopy}
                     disabled={!hasGenerated}
-                    className="border border-[#c8d3dc] bg-white px-4 py-2 text-sm font-semibold text-[#394552] transition-colors hover:bg-[#f1f5f8] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="rounded-full border border-[#e3ded2] bg-[#f7f5ef] px-5 py-2 text-sm font-semibold text-[#5f5b52] transition-colors hover:border-[#c4b894] hover:text-[#1f1f1f] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     复制 YAML
                   </button>
@@ -884,7 +914,7 @@ export default function Home() {
                     type="button"
                     onClick={handleDownload}
                     disabled={!hasGenerated}
-                    className="border border-[#c8d3dc] bg-white px-4 py-2 text-sm font-semibold text-[#394552] transition-colors hover:bg-[#f1f5f8] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="rounded-full border border-[#e3ded2] bg-[#f7f5ef] px-5 py-2 text-sm font-semibold text-[#5f5b52] transition-colors hover:border-[#c4b894] hover:text-[#1f1f1f] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     下载 YAML
                   </button>
@@ -892,7 +922,7 @@ export default function Home() {
               </div>
 
               <div className="mt-3 flex justify-end">
-                <label className="flex items-center gap-2 text-sm font-semibold text-[#394552]">
+                <label className="flex items-center gap-2 text-sm font-semibold text-[#5f5b52]">
                   <input
                     type="checkbox"
                     checked={useMock}
@@ -904,7 +934,7 @@ export default function Home() {
             </div>
 
             {inputError ? (
-              <p className="border border-[#d59b9b] bg-[#fff4f4] px-4 py-3 text-sm text-[#9b2f2f]">
+              <p className="rounded-2xl border border-[#f0c9c2] bg-[#fdf3f1] px-4 py-3 text-sm text-[#9b2f2f]">
                 {inputError}
               </p>
             ) : null}
