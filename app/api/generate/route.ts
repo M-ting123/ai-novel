@@ -11,6 +11,7 @@ type GenerateRequestBody = {
   novelText?: string;
   genre?: string;
   strategy?: string;
+  revisionInstruction?: string;
   useMock?: boolean;
 };
 
@@ -66,7 +67,17 @@ function buildPrompt({
   novelText,
   genre,
   strategy,
-}: Required<Pick<GenerateRequestBody, "novelText" | "genre" | "strategy">>) {
+  revisionInstruction,
+}: Required<Pick<GenerateRequestBody, "novelText" | "genre" | "strategy">> & {
+  revisionInstruction?: string;
+}) {
+  const revisionSection = revisionInstruction
+    ? `
+额外改编要求:
+${revisionInstruction}
+`
+    : "";
+
   return `把以下小说文本改编为短剧剧本 YAML。只输出纯 YAML，不要 Markdown 代码块和额外解释。
 
 YAML 结构要求：
@@ -87,6 +98,7 @@ YAML 结构要求：
 - source_refs 必须引用 source.chapters 中存在的章节 id；不明确时写入 metadata.warnings，不要省略字段
 
 题材: ${genre}  策略: ${strategy}
+${revisionSection}
 
 小说文本:
 ${novelText}`;
@@ -136,6 +148,7 @@ export async function POST(request: Request) {
   const novelText = body.novelText?.trim() ?? "";
   const genre = body.genre ?? "通用";
   const strategy = body.strategy ?? "忠实改编";
+  const revisionInstruction = body.revisionInstruction?.trim();
 
   if (body.useMock) {
     return mockResponse("当前使用 Mock 示例，未调用外部 AI API。");
@@ -176,7 +189,12 @@ export async function POST(request: Request) {
           },
           {
             role: "user",
-            content: buildPrompt({ novelText, genre, strategy }),
+            content: buildPrompt({
+              novelText,
+              genre,
+              strategy,
+              revisionInstruction,
+            }),
           },
         ],
         temperature: 0.2,
