@@ -30,6 +30,19 @@ type FeatureSlide = {
   illustrationSrc: string;
 };
 
+type ToolDefinition = {
+  id: "shots" | "scenes" | "assets";
+  title: string;
+  description: string;
+};
+
+type ToolTask = {
+  id: string;
+  title: string;
+  status: "generating" | "done";
+  createdAt: string;
+};
+
 const featureSlides: FeatureSlide[] = [
   {
     title: "小说章节进入改编",
@@ -55,6 +68,24 @@ const featureSlides: FeatureSlide[] = [
     title: "复制与下载",
     description: "生成结果可以复制或下载，方便交给后续创作、剪辑或展示流程。",
     illustrationSrc: "/illustrations/5.png",
+  },
+];
+
+const scriptTools: ToolDefinition[] = [
+  {
+    id: "shots",
+    title: "场景分镜预览",
+    description: "按场景查看镜头安排。",
+  },
+  {
+    id: "scenes",
+    title: "剧本场景预览",
+    description: "查看场景、动作和对白。",
+  },
+  {
+    id: "assets",
+    title: "故事资源拆解",
+    description: "整理人物、关系和世界观。",
   },
 ];
 
@@ -240,6 +271,7 @@ export default function Home() {
   const [yamlText, setYamlText] = useState(mockYamlText);
   const [isGenerating, setIsGenerating] = useState(false);
   const [useMock, setUseMock] = useState(false);
+  const [toolTasks, setToolTasks] = useState<ToolTask[]>([]);
   const validationResults = validateSchema(validationData);
   const previewData = extractPreviewData(validationData);
   const storyBible = extractStoryBible(validationData);
@@ -388,6 +420,33 @@ export default function Home() {
     } finally {
       setIsGenerating(false);
     }
+  }
+
+  function handleCreateToolTask(tool: ToolDefinition) {
+    if (!hasGenerated) {
+      return;
+    }
+
+    const taskId = `${tool.id}-${toolTasks.length + 1}`;
+    const createdAt = `任务 ${toolTasks.length + 1}`;
+
+    setToolTasks((currentTasks) => [
+      {
+        id: taskId,
+        title: tool.title,
+        status: "generating",
+        createdAt,
+      },
+      ...currentTasks,
+    ]);
+
+    window.setTimeout(() => {
+      setToolTasks((currentTasks) =>
+        currentTasks.map((task) =>
+          task.id === taskId ? { ...task, status: "done" } : task,
+        ),
+      );
+    }, 1200);
   }
 
   const activeFeature = featureSlides[activeFeatureIndex];
@@ -657,22 +716,76 @@ export default function Home() {
                 剧本工具箱
               </h2>
               <div className="mt-4 grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
-                {[
-                  "场景分镜预览",
-                  "剧本场景预览",
-                  "故事资源拆解",
-                ].map((toolName) => (
-                  <div
-                    key={toolName}
-                    className="border border-[#dde3e8] bg-[#fbfcfd] p-3 text-sm"
+                {scriptTools.map((tool) => (
+                  <button
+                    key={tool.id}
+                    type="button"
+                    onClick={() => handleCreateToolTask(tool)}
+                    disabled={!hasGenerated}
+                    className="border border-[#dde3e8] bg-[#fbfcfd] p-3 text-left text-sm transition-colors hover:border-[#9fb4c5] hover:bg-[#f1f5f8] disabled:cursor-not-allowed disabled:opacity-55"
                   >
-                    <p className="font-semibold text-[#101820]">{toolName}</p>
-                    <p className="mt-1 text-xs leading-5 text-[#59636e]">
-                      当前版本展示已生成结果，点击生成任务留到下一 PR。
+                    <p className="font-semibold text-[#101820]">
+                      {tool.title}
                     </p>
-                  </div>
+                    <p className="mt-1 text-xs leading-5 text-[#59636e]">
+                      {hasGenerated ? tool.description : "生成 YAML 后可使用。"}
+                    </p>
+                  </button>
                 ))}
               </div>
+            </section>
+
+            <section className="border border-[#dde3e8] bg-white p-4">
+              <h2 className="text-lg font-semibold text-[#101820]">
+                生成结果
+              </h2>
+              {toolTasks.length > 0 ? (
+                <ul className="mt-4 space-y-3">
+                  {toolTasks.map((task) => (
+                    <li
+                      key={task.id}
+                      className={`border p-3 text-sm ${
+                        task.status === "done"
+                          ? "border-[#c8d3dc] bg-white"
+                          : "border-[#dde3e8] bg-[#f7fafc]"
+                      }`}
+                    >
+                      <div className="flex items-center justify-between gap-3">
+                        <div className="flex min-w-0 items-center gap-2">
+                          <span
+                            className={`h-2.5 w-2.5 shrink-0 rounded-full ${
+                              task.status === "done"
+                                ? "bg-[#3c8a4b]"
+                                : "bg-[#9aa7b2]"
+                            }`}
+                          />
+                          <div className="min-w-0">
+                            <p className="truncate font-semibold text-[#101820]">
+                              {task.title}
+                            </p>
+                            <p className="mt-1 text-xs text-[#59636e]">
+                              {task.createdAt}
+                            </p>
+                          </div>
+                        </div>
+                        <span
+                          className={`shrink-0 text-xs font-semibold ${
+                            task.status === "done"
+                              ? "text-[#2f6b35]"
+                              : "text-[#59636e]"
+                          }`}
+                        >
+                          {task.status === "done" ? "已生成" : "生成中..."}
+                        </span>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              ) : (
+                <p className="mt-3 text-sm leading-6 text-[#59636e]">
+                  点击上方工具卡片后，这里会显示生成任务记录。
+                </p>
+              )}
             </section>
 
             {hasGenerated ? (
