@@ -592,79 +592,96 @@ export default function Home() {
 
   if (!showWorkspace) {
     return (
-      <main className="min-h-screen bg-[#f6f7f8] px-5 py-8 text-[#1f2933] sm:px-8 lg:px-12">
-        <section className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col justify-center gap-8">
-          <header className="max-w-3xl">
-            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#315f8a]">
+      <main className="min-h-screen bg-[#fafafa] px-5 py-8 text-[#1f1f1f] sm:px-8 lg:px-12">
+        <section className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col gap-8">
+          <header className="text-center">
+            <p className="text-sm font-semibold text-[#1a73e8]">
               Novel2Script YAML Studio
             </p>
-            <h1 className="mt-4 text-4xl font-semibold leading-tight text-[#101820] sm:text-6xl">
+            <h1 className="mt-3 text-4xl font-semibold leading-tight text-[#1f1f1f] sm:text-6xl">
               文入剧中
             </h1>
-            <p className="mt-5 text-base leading-8 text-[#59636e] sm:text-lg">
+            <p className="mx-auto mt-4 max-w-2xl text-base leading-8 text-[#5f6368] sm:text-lg">
               从章回到镜头，从文字到剧本，让小说在结构化剧本中重新开场。
             </p>
-            <button
-              type="button"
-              onClick={() => {
-                setInputError("");
-                setShowStartModal(true);
-              }}
-              className="mt-8 border border-[#101820] bg-[#101820] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#24313d]"
-            >
-              开始
-            </button>
           </header>
 
-          <section className="grid gap-5 border border-[#dde3e8] bg-white p-5 shadow-sm md:grid-cols-[0.8fr_1.2fr]">
-            <div>
-              <p className="text-sm font-semibold text-[#315f8a]">功能预览</p>
-              <h2 className="mt-2 text-2xl font-semibold text-[#101820]">
-                先看清楚这套工作台能做什么
-              </h2>
-              <p className="mt-3 text-sm leading-6 text-[#59636e]">
-                首页先展示核心能力，点击开始后进入现有 YAML 生成工作区。
+          <section className="grid flex-1 items-center gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+            <div className="rounded-2xl border border-[#e0e0e0] bg-white p-6 shadow-sm sm:p-8">
+              <p className="text-sm font-semibold text-[#1a73e8]">
+                从小说开始
               </p>
-            </div>
-
-            <div className="border border-[#dde3e8] bg-[#fbfcfd] p-5">
-              <div className="flex items-start justify-between gap-4">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7a8794]">
-                    {String(activeFeatureIndex + 1).padStart(2, "0")} /{" "}
-                    {String(featureSlides.length).padStart(2, "0")}
-                  </p>
-                  <h3 className="mt-3 text-xl font-semibold text-[#101820]">
-                    {activeFeature.title}
-                  </h3>
-                </div>
-                <span className="border border-[#c8d3dc] px-3 py-1 text-xs font-semibold text-[#315f8a]">
-                  自动轮播
+              <h2 className="mt-3 text-3xl font-semibold leading-tight text-[#1f1f1f] sm:text-4xl">
+                把小说内容转成可继续创作的剧本 YAML
+              </h2>
+              <p className="mt-4 text-sm leading-7 text-[#5f6368] sm:text-base">
+                上传或粘贴小说章节后，系统会生成结构化剧本 YAML，并继续拆解场景、分镜和故事资产。
+              </p>
+              <div className="mt-6 flex flex-wrap gap-3 text-sm text-[#5f6368]">
+                <span className="rounded-full bg-[#f1f3f4] px-3 py-1">
+                  TXT 导入
+                </span>
+                <span className="rounded-full bg-[#f1f3f4] px-3 py-1">
+                  YAML 输出
+                </span>
+                <span className="rounded-full bg-[#f1f3f4] px-3 py-1">
+                  Schema 校验
                 </span>
               </div>
-              <p className="mt-4 min-h-12 text-sm leading-6 text-[#59636e]">
-                {activeFeature.description}
-              </p>
-              <div className="mt-5 flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-white">
-                <Image
-                  src={activeFeature.illustrationSrc}
-                  alt={activeFeature.title}
-                  width={1456}
-                  height={1056}
-                  className="h-full w-full object-contain"
-                />
+
+              <button
+                type="button"
+                onClick={() => {
+                  setInputError("");
+                  setShowStartModal(true);
+                }}
+                className="mt-8 rounded-full bg-[#1a73e8] px-7 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-[#1765cc] hover:shadow-md"
+              >
+                开始
+              </button>
+            </div>
+
+            <div className="rounded-2xl border border-[#e0e0e0] bg-white p-5 shadow-sm">
+              <div className="rounded-2xl bg-[#f8fafd] p-5">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-xs font-semibold text-[#5f6368]">
+                      {String(activeFeatureIndex + 1).padStart(2, "0")} /{" "}
+                      {String(featureSlides.length).padStart(2, "0")}
+                    </p>
+                    <h3 className="mt-2 text-xl font-semibold text-[#1f1f1f]">
+                      {activeFeature.title}
+                    </h3>
+                    <p className="mt-2 min-h-12 text-sm leading-6 text-[#5f6368]">
+                      {activeFeature.description}
+                    </p>
+                  </div>
+                  <span className="rounded-full bg-[#d3e3fd] px-3 py-1 text-xs font-semibold text-[#1a73e8]">
+                    自动轮播
+                  </span>
+                </div>
+
+                <div className="mt-5 flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-2xl bg-white">
+                  <Image
+                    src={activeFeature.illustrationSrc}
+                    alt={activeFeature.title}
+                    width={1456}
+                    height={1056}
+                    className="h-full w-full object-contain"
+                  />
+                </div>
               </div>
-              <div className="mt-5 flex flex-wrap gap-2">
+              <div className="mt-4 flex justify-center gap-2">
                 {featureSlides.map((feature, index) => (
                   <button
                     key={feature.title}
                     type="button"
                     onClick={() => setActiveFeatureIndex(index)}
                     aria-label={`切换到${feature.title}`}
-                    className={`h-2.5 w-8 border transition-colors ${
+                    className={`h-2.5 rounded-full transition-all ${
                       activeFeatureIndex === index
-                        ? "border-[#315f8a] bg-[#315f8a]"
-                        : "border-[#c8d3dc] bg-white hover:bg-[#e8eef3]"
+                        ? "w-8 bg-[#1a73e8]"
+                        : "w-2.5 bg-[#c4c7cc] hover:bg-[#9aa0a6]"
                     }`}
                   />
                 ))}
