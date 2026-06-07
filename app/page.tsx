@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import Image from "next/image";
+import { useEffect, useState } from "react";
 import {
   ConfigSelector,
   type Genre,
@@ -27,6 +28,40 @@ type PreviewData = {
 type PreviewScene = ScenePreview & {
   shots?: ShotPreview[];
 };
+
+type FeatureSlide = {
+  title: string;
+  description: string;
+  illustrationSrc: string;
+};
+
+const featureSlides: FeatureSlide[] = [
+  {
+    title: "小说章节进入改编",
+    description: "长篇、短篇、网文和故事草稿，都可以作为剧本改编输入。",
+    illustrationSrc: "/illustrations/1.png",
+  },
+  {
+    title: "剧本 YAML 生成",
+    description: "把小说内容拆解为结构化 YAML，方便继续编辑、校验和复用。",
+    illustrationSrc: "/illustrations/2.png",
+  },
+  {
+    title: "故事资产拆解",
+    description: "整理人物、关系、世界观和关键事件，让剧情资产更清楚。",
+    illustrationSrc: "/illustrations/3.png",
+  },
+  {
+    title: "Schema 校验",
+    description: "检查字段缺失和结构问题，减少生成结果无法继续使用的风险。",
+    illustrationSrc: "/illustrations/4.png",
+  },
+  {
+    title: "复制与下载",
+    description: "生成结果可以复制或下载，方便交给后续创作、剪辑或展示流程。",
+    illustrationSrc: "/illustrations/5.png",
+  },
+];
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
@@ -195,6 +230,8 @@ function extractStoryBible(data: unknown): StoryBiblePreview {
 }
 
 export default function Home() {
+  const [showWorkspace, setShowWorkspace] = useState(false);
+  const [activeFeatureIndex, setActiveFeatureIndex] = useState(0);
   const [statusMessage, setStatusMessage] = useState("");
   const [parseStatus, setParseStatus] = useState<ParseStatus>("idle");
   const [validationData, setValidationData] = useState<unknown>(mockScriptData);
@@ -222,6 +259,20 @@ export default function Home() {
       : parseStatus === "failed"
         ? "YAML 结构解析失败：当前已显示 Mock 示例，后续功能暂不能使用这次 AI 结果。"
         : "";
+
+  useEffect(() => {
+    if (showWorkspace) {
+      return;
+    }
+
+    const timer = window.setInterval(() => {
+      setActiveFeatureIndex((currentIndex) =>
+        currentIndex === featureSlides.length - 1 ? 0 : currentIndex + 1,
+      );
+    }, 3000);
+
+    return () => window.clearInterval(timer);
+  }, [showWorkspace]);
 
   async function handleCopy() {
     try {
@@ -343,19 +394,113 @@ export default function Home() {
     }
   }
 
+  const activeFeature = featureSlides[activeFeatureIndex];
+
+  if (!showWorkspace) {
+    return (
+      <main className="min-h-screen bg-[#f6f7f8] px-5 py-8 text-[#1f2933] sm:px-8 lg:px-12">
+        <section className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col justify-center gap-8">
+          <header className="max-w-3xl">
+            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#315f8a]">
+              Novel2Script YAML Studio
+            </p>
+            <h1 className="mt-4 text-4xl font-semibold leading-tight text-[#101820] sm:text-6xl">
+              文入剧中
+            </h1>
+            <p className="mt-5 text-base leading-8 text-[#59636e] sm:text-lg">
+              从章回到镜头，从文字到剧本，让小说在结构化剧本中重新开场。
+            </p>
+            <button
+              type="button"
+              onClick={() => setShowWorkspace(true)}
+              className="mt-8 border border-[#101820] bg-[#101820] px-6 py-3 text-sm font-semibold text-white transition-colors hover:bg-[#24313d]"
+            >
+              开始
+            </button>
+          </header>
+
+          <section className="grid gap-5 border border-[#dde3e8] bg-white p-5 shadow-sm md:grid-cols-[0.8fr_1.2fr]">
+            <div>
+              <p className="text-sm font-semibold text-[#315f8a]">功能预览</p>
+              <h2 className="mt-2 text-2xl font-semibold text-[#101820]">
+                先看清楚这套工作台能做什么
+              </h2>
+              <p className="mt-3 text-sm leading-6 text-[#59636e]">
+                首页先展示核心能力，点击开始后进入现有 YAML 生成工作区。
+              </p>
+            </div>
+
+            <div className="border border-[#dde3e8] bg-[#fbfcfd] p-5">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#7a8794]">
+                    {String(activeFeatureIndex + 1).padStart(2, "0")} /{" "}
+                    {String(featureSlides.length).padStart(2, "0")}
+                  </p>
+                  <h3 className="mt-3 text-xl font-semibold text-[#101820]">
+                    {activeFeature.title}
+                  </h3>
+                </div>
+                <span className="border border-[#c8d3dc] px-3 py-1 text-xs font-semibold text-[#315f8a]">
+                  自动轮播
+                </span>
+              </div>
+              <p className="mt-4 min-h-12 text-sm leading-6 text-[#59636e]">
+                {activeFeature.description}
+              </p>
+              <div className="mt-5 flex aspect-[4/3] w-full items-center justify-center overflow-hidden bg-white">
+                <Image
+                  src={activeFeature.illustrationSrc}
+                  alt={activeFeature.title}
+                  width={1456}
+                  height={1056}
+                  className="h-full w-full object-contain"
+                />
+              </div>
+              <div className="mt-5 flex flex-wrap gap-2">
+                {featureSlides.map((feature, index) => (
+                  <button
+                    key={feature.title}
+                    type="button"
+                    onClick={() => setActiveFeatureIndex(index)}
+                    aria-label={`切换到${feature.title}`}
+                    className={`h-2.5 w-8 border transition-colors ${
+                      activeFeatureIndex === index
+                        ? "border-[#315f8a] bg-[#315f8a]"
+                        : "border-[#c8d3dc] bg-white hover:bg-[#e8eef3]"
+                    }`}
+                  />
+                ))}
+              </div>
+            </div>
+          </section>
+        </section>
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-[#f7f3ec] px-5 py-8 text-[#24211d] sm:px-8 lg:px-12">
       <section className="mx-auto flex max-w-5xl flex-col gap-6">
-        <div className="border-b border-[#d8cbb8] pb-5">
-          <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#7a4f2a]">
-            Novel2Script YAML Studio
-          </p>
-          <h1 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl">
-            小说转短剧 YAML 工作台
-          </h1>
-          <p className="mt-3 max-w-3xl text-base leading-7 text-[#5f584f]">
-            输入小说文本后生成结构化 YAML，并同步展示校验结果、场景预览和分镜预览。
-          </p>
+        <div className="flex flex-col gap-4 border-b border-[#d8cbb8] pb-5 sm:flex-row sm:items-start sm:justify-between">
+          <div>
+            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#7a4f2a]">
+              Novel2Script YAML Studio
+            </p>
+            <h1 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl">
+              小说转短剧 YAML 工作台
+            </h1>
+            <p className="mt-3 max-w-3xl text-base leading-7 text-[#5f584f]">
+              输入小说文本后生成结构化 YAML，并同步展示校验结果、场景预览和分镜预览。
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowWorkspace(false)}
+            className="w-fit border border-[#8c6a3f] bg-[#fffaf2] px-4 py-2 text-sm font-semibold text-[#24211d] transition-colors hover:bg-[#efe2cf]"
+          >
+            返回首页
+          </button>
         </div>
 
         <NovelInput
