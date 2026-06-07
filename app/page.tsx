@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
+import type { Genre, Strategy } from "@/components/ConfigSelector";
 import { SceneCard, type ScenePreview } from "@/components/SceneCard";
 import { ShotCard, type ShotPreview } from "@/components/ShotCard";
 import {
@@ -38,6 +39,7 @@ type ToolDefinition = {
 
 type ToolTask = {
   id: string;
+  toolId: ToolDefinition["id"];
   title: string;
   status: "generating" | "done";
   createdAt: string;
@@ -266,12 +268,15 @@ export default function Home() {
   const [hasGenerated, setHasGenerated] = useState(false);
   const [novelText, setNovelText] = useState("");
   const [inputError, setInputError] = useState("");
-  const genre = "通用";
-  const strategy = "忠实改编";
+  const [genre, setGenre] = useState<Genre>("通用");
+  const [strategy, setStrategy] = useState<Strategy>("忠实改编");
   const [yamlText, setYamlText] = useState(mockYamlText);
   const [isGenerating, setIsGenerating] = useState(false);
   const [useMock, setUseMock] = useState(false);
   const [toolTasks, setToolTasks] = useState<ToolTask[]>([]);
+  const [selectedToolTask, setSelectedToolTask] = useState<ToolTask | null>(
+    null,
+  );
   const validationResults = validateSchema(validationData);
   const previewData = extractPreviewData(validationData);
   const storyBible = extractStoryBible(validationData);
@@ -433,6 +438,7 @@ export default function Home() {
     setToolTasks((currentTasks) => [
       {
         id: taskId,
+        toolId: tool.id,
         title: tool.title,
         status: "generating",
         createdAt,
@@ -468,6 +474,56 @@ export default function Home() {
     : isGenerating
       ? "正在生成 YAML，请稍候..."
       : "等待生成 YAML...";
+  const renderToolTaskContent = (task: ToolTask) => {
+    if (task.toolId === "shots") {
+      return previewData.scenes.length > 0 ? (
+        <div className="space-y-4">
+          {previewData.scenes.map((scene, sceneIndex) => (
+            <section
+              key={scene.id ?? `modal-shot-scene-${sceneIndex}`}
+              className="border border-[#dde3e8] bg-[#fbfcfd] p-4"
+            >
+              <h3 className="text-base font-semibold text-[#101820]">
+                {scene.title ?? "未命名场景"}
+              </h3>
+              {(scene.shots ?? []).length > 0 ? (
+                <div className="mt-3 space-y-3">
+                  {(scene.shots ?? []).map((shot, shotIndex) => (
+                    <ShotCard
+                      key={shot.id ?? `modal-shot-${sceneIndex}-${shotIndex}`}
+                      shot={shot}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <p className="mt-2 text-sm text-[#59636e]">暂无分镜。</p>
+              )}
+            </section>
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-[#59636e]">暂无可展示的分镜。</p>
+      );
+    }
+
+    if (task.toolId === "scenes") {
+      return previewData.scenes.length > 0 ? (
+        <div className="space-y-4">
+          {previewData.scenes.map((scene, index) => (
+            <SceneCard
+              key={scene.id ?? `modal-scene-${index}`}
+              scene={scene}
+              characterNames={previewData.characterNames}
+            />
+          ))}
+        </div>
+      ) : (
+        <p className="text-sm text-[#59636e]">暂无可展示的场景。</p>
+      );
+    }
+
+    return <StoryBiblePanel storyBible={storyBible} />;
+  };
 
   if (!showWorkspace) {
     return (
@@ -639,7 +695,45 @@ export default function Home() {
             </div>
 
             <div className="border border-[#dde3e8] bg-white p-4">
-              <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+              <div className="grid gap-4 xl:grid-cols-[1fr_auto] xl:items-end">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <label className="block text-sm font-semibold text-[#394552]">
+                    题材类型
+                    <select
+                      value={genre}
+                      onChange={(event) =>
+                        setGenre(event.target.value as Genre)
+                      }
+                      className="mt-2 w-full border border-[#c8d3dc] bg-white px-3 py-2 text-sm text-[#101820] outline-none focus:border-[#315f8a]"
+                    >
+                      {["悬疑", "都市", "玄幻", "言情", "通用"].map(
+                        (option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ),
+                      )}
+                    </select>
+                  </label>
+
+                  <label className="block text-sm font-semibold text-[#394552]">
+                    改编策略
+                    <select
+                      value={strategy}
+                      onChange={(event) =>
+                        setStrategy(event.target.value as Strategy)
+                      }
+                      className="mt-2 w-full border border-[#c8d3dc] bg-white px-3 py-2 text-sm text-[#101820] outline-none focus:border-[#315f8a]"
+                    >
+                      {["忠实改编", "压缩改编", "冲突强化"].map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
+                    </select>
+                  </label>
+                </div>
+
                 <div className="flex flex-wrap gap-3">
                   <button
                     type="button"
@@ -668,6 +762,9 @@ export default function Home() {
                     下载 YAML
                   </button>
                 </div>
+              </div>
+
+              <div className="mt-3 flex justify-end">
                 <label className="flex items-center gap-2 text-sm font-semibold text-[#394552]">
                   <input
                     type="checkbox"
@@ -744,13 +841,18 @@ export default function Home() {
                   {toolTasks.map((task) => (
                     <li
                       key={task.id}
-                      className={`border p-3 text-sm ${
+                      className={`border text-sm ${
                         task.status === "done"
-                          ? "border-[#c8d3dc] bg-white"
+                          ? "border-[#c8d3dc] bg-white transition-colors hover:bg-[#f1f5f8]"
                           : "border-[#dde3e8] bg-[#f7fafc]"
                       }`}
                     >
-                      <div className="flex items-center justify-between gap-3">
+                      <button
+                        type="button"
+                        disabled={task.status !== "done"}
+                        onClick={() => setSelectedToolTask(task)}
+                        className="flex w-full items-center justify-between gap-3 p-3 text-left disabled:cursor-not-allowed"
+                      >
                         <div className="flex min-w-0 items-center gap-2">
                           <span
                             className={`h-2.5 w-2.5 shrink-0 rounded-full ${
@@ -777,7 +879,7 @@ export default function Home() {
                         >
                           {task.status === "done" ? "已生成" : "生成中..."}
                         </span>
-                      </div>
+                      </button>
                     </li>
                   ))}
                 </ul>
@@ -787,77 +889,34 @@ export default function Home() {
                 </p>
               )}
             </section>
-
-            {hasGenerated ? (
-              <>
-                <section className="border border-[#dde3e8] bg-white p-4">
-                  <h2 className="text-lg font-semibold text-[#101820]">
-                    剧本场景预览
-                  </h2>
-                  <div className="mt-3 space-y-3">
-                    {previewData.scenes.length > 0 ? (
-                      previewData.scenes.map((scene, index) => (
-                        <SceneCard
-                          key={scene.id ?? `scene-${index}`}
-                          scene={scene}
-                          characterNames={previewData.characterNames}
-                        />
-                      ))
-                    ) : (
-                      <p className="border border-[#dde3e8] bg-[#fbfcfd] p-3 text-sm text-[#59636e]">
-                        暂无可展示的场景。
-                      </p>
-                    )}
-                  </div>
-                </section>
-
-                <section className="border border-[#dde3e8] bg-white p-4">
-                  <h2 className="text-lg font-semibold text-[#101820]">
-                    分镜预览
-                  </h2>
-                  <div className="mt-3 space-y-3">
-                    {previewData.scenes.length > 0 ? (
-                      previewData.scenes.map((scene, sceneIndex) => (
-                        <section
-                          key={scene.id ?? `shot-scene-${sceneIndex}`}
-                          className="border border-[#dde3e8] bg-[#fbfcfd] p-3"
-                        >
-                          <h3 className="text-sm font-semibold text-[#101820]">
-                            {scene.title ?? "未命名场景"}
-                          </h3>
-                          {(scene.shots ?? []).length > 0 ? (
-                            <div className="mt-3 space-y-3">
-                              {(scene.shots ?? []).map((shot, shotIndex) => (
-                                <ShotCard
-                                  key={
-                                    shot.id ??
-                                    `shot-${sceneIndex}-${shotIndex}`
-                                  }
-                                  shot={shot}
-                                />
-                              ))}
-                            </div>
-                          ) : (
-                            <p className="mt-2 text-sm text-[#59636e]">
-                              暂无分镜。
-                            </p>
-                          )}
-                        </section>
-                      ))
-                    ) : (
-                      <p className="border border-[#dde3e8] bg-[#fbfcfd] p-3 text-sm text-[#59636e]">
-                        暂无可展示的分镜。
-                      </p>
-                    )}
-                  </div>
-                </section>
-
-                <StoryBiblePanel storyBible={storyBible} />
-              </>
-            ) : null}
           </aside>
         </div>
       </section>
+
+      {selectedToolTask ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#101820]/45 px-5 py-8">
+          <section className="max-h-[92vh] w-full max-w-4xl overflow-auto border border-[#dde3e8] bg-white p-5 shadow-xl">
+            <div className="flex flex-col gap-3 border-b border-[#dde3e8] pb-4 sm:flex-row sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm font-semibold text-[#315f8a]">
+                  已生成内容
+                </p>
+                <h2 className="mt-1 text-2xl font-semibold text-[#101820]">
+                  {selectedToolTask.title}
+                </h2>
+              </div>
+              <button
+                type="button"
+                onClick={() => setSelectedToolTask(null)}
+                className="w-fit border border-[#c8d3dc] bg-white px-4 py-2 text-sm font-semibold text-[#394552] transition-colors hover:bg-[#f1f5f8]"
+              >
+                关闭
+              </button>
+            </div>
+            <div className="mt-5">{renderToolTaskContent(selectedToolTask)}</div>
+          </section>
+        </div>
+      ) : null}
     </main>
   );
 }
