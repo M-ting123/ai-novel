@@ -592,39 +592,63 @@ export default function Home() {
 
   if (!showWorkspace) {
     return (
-      <main className="min-h-screen bg-[#fafafa] px-5 py-8 text-[#1f1f1f] sm:px-8 lg:px-12">
-        <section className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col gap-8">
-          <header className="text-center">
-            <p className="text-sm font-semibold text-[#1a73e8]">
-              Novel2Script YAML Studio
-            </p>
-            <h1 className="mt-3 text-4xl font-semibold leading-tight text-[#1f1f1f] sm:text-6xl">
-              文入剧中
-            </h1>
-            <p className="mx-auto mt-4 max-w-2xl text-base leading-8 text-[#5f6368] sm:text-lg">
-              从章回到镜头，从文字到剧本，让小说在结构化剧本中重新开场。
-            </p>
+      <main className="min-h-screen bg-[#efece4] px-5 py-5 text-[#1f1f1f] sm:px-8 lg:px-12">
+        <div className="mx-auto flex min-h-[calc(100vh-2.5rem)] max-w-6xl flex-col">
+          <header className="flex items-center justify-between py-2">
+            <div className="flex items-center gap-2.5">
+              <span
+                aria-hidden="true"
+                className="flex h-9 w-9 items-center justify-center text-[#1f1f1f]"
+              >
+                <svg
+                  width="30"
+                  height="30"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M18.178 8c5.096 0 5.096 8 0 8-5.095 0-7.133-8-12.739-8-4.585 0-4.585 8 0 8 5.606 0 7.644-8 12.74-8z" />
+                </svg>
+              </span>
+              <span className="text-lg font-semibold tracking-tight text-[#1f1f1f]">
+                Novel2Script
+              </span>
+            </div>
+
+            <button
+              type="button"
+              onClick={() => {
+                setInputError("");
+                setShowStartModal(true);
+              }}
+              className="rounded-full bg-[#1f1f1f] px-6 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-[#000000] hover:shadow-md"
+            >
+              开始 →
+            </button>
           </header>
 
-          <section className="grid flex-1 items-center gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-            <div className="rounded-2xl border border-[#e0e0e0] bg-white p-6 shadow-sm sm:p-8">
-              <p className="text-sm font-semibold text-[#1a73e8]">
-                从小说开始
+          <section className="grid flex-1 items-center gap-8 lg:grid-cols-[0.9fr_1.1fr]">
+            <div className="py-6">
+              <p className="text-sm font-semibold text-[#9a7b4f]">
+                Novel2Script YAML Studio
               </p>
-              <h2 className="mt-3 text-3xl font-semibold leading-tight text-[#1f1f1f] sm:text-4xl">
-                把小说内容转成可继续创作的剧本 YAML
-              </h2>
-              <p className="mt-4 text-sm leading-7 text-[#5f6368] sm:text-base">
-                上传或粘贴小说章节后，系统会生成结构化剧本 YAML，并继续拆解场景、分镜和故事资产。
+              <h1 className="mt-4 text-5xl font-bold leading-tight text-[#1f1f1f] sm:text-6xl text-balance">
+                文入剧中
+              </h1>
+              <p className="mt-5 max-w-md text-base leading-8 text-[#5f5b52] sm:text-lg text-pretty">
+                从章回到镜头，从文字到剧本，把小说内容转成可继续创作的结构化剧本 YAML。
               </p>
-              <div className="mt-6 flex flex-wrap gap-3 text-sm text-[#5f6368]">
-                <span className="rounded-full bg-[#f1f3f4] px-3 py-1">
+              <div className="mt-7 flex flex-wrap gap-3 text-sm text-[#5f5b52]">
+                <span className="rounded-full bg-[#e3ded2] px-3 py-1">
                   TXT 导入
                 </span>
-                <span className="rounded-full bg-[#f1f3f4] px-3 py-1">
+                <span className="rounded-full bg-[#e3ded2] px-3 py-1">
                   YAML 输出
                 </span>
-                <span className="rounded-full bg-[#f1f3f4] px-3 py-1">
+                <span className="rounded-full bg-[#e3ded2] px-3 py-1">
                   Schema 校验
                 </span>
               </div>
@@ -635,14 +659,14 @@ export default function Home() {
                   setInputError("");
                   setShowStartModal(true);
                 }}
-                className="mt-8 rounded-full bg-[#1a73e8] px-7 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-[#1765cc] hover:shadow-md"
+                className="mt-8 rounded-full bg-[#1f1f1f] px-7 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-[#000000] hover:shadow-md"
               >
-                开始
+                开始学习
               </button>
             </div>
 
-            <div className="rounded-2xl border border-[#e0e0e0] bg-white p-5 shadow-sm">
-              <div className="rounded-2xl bg-[#f8fafd] p-5">
+            <div className="rounded-3xl border border-[#e6e1d6] bg-white p-5 shadow-sm">
+              <div className="rounded-2xl bg-[#f7f5ef] p-5">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="text-xs font-semibold text-[#5f6368]">
@@ -656,7 +680,7 @@ export default function Home() {
                       {activeFeature.description}
                     </p>
                   </div>
-                  <span className="rounded-full bg-[#d3e3fd] px-3 py-1 text-xs font-semibold text-[#1a73e8]">
+                  <span className="rounded-full bg-[#ece4d3] px-3 py-1 text-xs font-semibold text-[#9a7b4f]">
                     自动轮播
                   </span>
                 </div>
@@ -680,8 +704,8 @@ export default function Home() {
                     aria-label={`切换到${feature.title}`}
                     className={`h-2.5 rounded-full transition-all ${
                       activeFeatureIndex === index
-                        ? "w-8 bg-[#1a73e8]"
-                        : "w-2.5 bg-[#c4c7cc] hover:bg-[#9aa0a6]"
+                        ? "w-8 bg-[#9a7b4f]"
+                        : "w-2.5 bg-[#cfc8b8] hover:bg-[#b3a98f]"
                     }`}
                   />
                 ))}
@@ -714,7 +738,7 @@ export default function Home() {
               errorMessage={inputError}
             />
           ) : null}
-        </section>
+        </div>
       </main>
     );
   }
