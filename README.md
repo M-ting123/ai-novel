@@ -4,6 +4,7 @@
 
 面向小说作者和短剧创作者：输入 3 章以上小说文本，选择题材和改编策略，系统生成结构化 YAML，并同步展示故事资产、Schema 校验、场景预览和分镜预览。
 <img width="1920" height="991" alt="image" src="https://github.com/user-attachments/assets/c4bc3823-fde5-4c28-9b2e-79d39155058d" />
+<img width="1920" height="991" alt="image" src="https://github.com/user-attachments/assets/b6430efc-d362-4de5-8df1-ef86ee2428ff" />
 
 
 ## 在线体验
