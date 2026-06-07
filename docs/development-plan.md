@@ -1,4 +1,4 @@
-﻿# Novel2Script YAML Studio — 开发执行计划
+# Novel2Script YAML Studio — 开发执行计划
 
 ## PR 执行顺序
 
