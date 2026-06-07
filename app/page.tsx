@@ -284,6 +284,7 @@ export default function Home() {
   const validationResults = validateSchema(validationData);
   const previewData = extractPreviewData(validationData);
   const storyBible = extractStoryBible(validationData);
+  const shouldShowToolModalTitle = selectedToolTask?.toolId !== "assets";
   useEffect(() => {
     if (showWorkspace) {
       return;
@@ -1076,14 +1077,18 @@ export default function Home() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-5 py-8">
           <section className="max-h-[92vh] w-full max-w-4xl overflow-auto rounded-3xl border border-[#eceae6] bg-white p-6 shadow-[0_24px_80px_rgba(60,64,67,0.24)]">
             <div className="flex flex-col gap-3 border-b border-[#eceae6] pb-4 sm:flex-row sm:items-center sm:justify-between">
-              <div>
-                <p className="text-sm font-semibold text-[#9a7b4f]">
-                  已生成内容
-                </p>
-                <h2 className="mt-1 text-2xl font-semibold text-[#1f1f1f]">
-                  {selectedToolTask.title}
-                </h2>
-              </div>
+              {shouldShowToolModalTitle ? (
+                <div>
+                  <p className="text-sm font-semibold text-[#9a7b4f]">
+                    已生成内容
+                  </p>
+                  <h2 className="mt-1 text-2xl font-semibold text-[#1f1f1f]">
+                    {selectedToolTask.title}
+                  </h2>
+                </div>
+              ) : (
+                <span />
+              )}
               <button
                 type="button"
                 onClick={() => setSelectedToolTask(null)}
