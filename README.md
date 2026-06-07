@@ -1,8 +1,10 @@
-# Novel2Script YAML Studio
+# 入戏
 
 小说转短剧剧本 YAML 的 72h MVP 项目。当前界面品牌名为 **入戏 InScene**。
 
 面向小说作者和短剧创作者：输入 3 章以上小说文本，选择题材和改编策略，系统生成结构化 YAML，并同步展示故事资产、Schema 校验、场景预览和分镜预览。
+<img width="1920" height="991" alt="image" src="https://github.com/user-attachments/assets/c4bc3823-fde5-4c28-9b2e-79d39155058d" />
+
 
 ## 在线体验
 
