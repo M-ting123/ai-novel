@@ -47,13 +47,13 @@ export function StartInputModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-5 py-8">
-      <section className="max-h-[92vh] w-full max-w-3xl overflow-auto rounded-2xl border border-[#e0e0e0] bg-white p-6 shadow-[0_4px_24px_rgba(0,0,0,0.15)]">
+      <section className="max-h-[92vh] w-full max-w-3xl overflow-auto rounded-3xl border border-[#e6e1d6] bg-[#faf8f3] p-6 shadow-[0_8px_40px_rgba(0,0,0,0.18)]">
         <div className="text-center">
-          <p className="text-sm font-semibold text-[#1a73e8]">添加来源</p>
-          <h2 className="mt-2 text-2xl font-semibold text-[#1f1f1f]">
+          <p className="text-sm font-semibold text-[#9a7b4f]">添加来源</p>
+          <h2 className="mt-2 text-2xl font-bold text-[#1f1f1f]">
             上传你的小说内容
           </h2>
-          <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-[#5f6368]">
+          <p className="mx-auto mt-2 max-w-xl text-sm leading-6 text-[#5f5b52]">
             拖拽 .txt 文件，或粘贴小说章节文本，然后直接生成剧本 YAML。
           </p>
         </div>
@@ -61,15 +61,15 @@ export function StartInputModal({
         <label
           onDragOver={(event) => event.preventDefault()}
           onDrop={handleDrop}
-          className="mt-6 block cursor-pointer rounded-2xl border-2 border-dashed border-[#c4c7cc] bg-[#f8f9fa] p-8 text-center transition-colors hover:border-[#1a73e8] hover:bg-[#f3f7fe]"
+          className="mt-6 block cursor-pointer rounded-2xl border-2 border-dashed border-[#d8d0c0] bg-white p-8 text-center transition-colors hover:border-[#9a7b4f] hover:bg-[#f7f3ea]"
         >
-          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#d3e3fd] text-xl text-[#1a73e8]">
+          <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#1f1f1f] text-xl text-[#efece4]">
             ↑
           </span>
           <span className="mt-4 block text-base font-semibold text-[#1f1f1f]">
             拖拽 .txt 文件到这里
           </span>
-          <span className="mt-2 block text-sm text-[#5f6368]">
+          <span className="mt-2 block text-sm text-[#5f5b52]">
             或点击选择文件，文件内容会自动填入文本区域。
           </span>
           <input
@@ -84,25 +84,25 @@ export function StartInputModal({
         </label>
 
         {fileMessage ? (
-          <p className="mt-3 rounded-xl border border-[#e0e0e0] bg-[#f8f9fa] px-3 py-2 text-sm text-[#3c4043]">
+          <p className="mt-3 rounded-xl border border-[#e6e1d6] bg-white px-3 py-2 text-sm text-[#3c3a34]">
             {fileMessage}
           </p>
         ) : null}
 
-        <div className="mt-5 rounded-2xl border border-[#e0e0e0] bg-white p-4">
+        <div className="mt-5 rounded-2xl border border-[#e6e1d6] bg-white p-4">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <h3 className="text-sm font-semibold text-[#1f1f1f]">
                 粘贴文本
               </h3>
-              <p className="mt-1 text-sm text-[#5f6368]">
+              <p className="mt-1 text-sm text-[#5f5b52]">
                 如果没有 txt 文件，可以直接粘贴小说内容。
               </p>
             </div>
             <button
               type="button"
               onClick={() => setShowPasteArea((current) => !current)}
-              className="w-fit rounded-full border border-[#dadce0] bg-white px-4 py-2 text-sm font-semibold text-[#3c4043] transition-colors hover:bg-[#f8f9fa]"
+              className="w-fit rounded-full border border-[#d8d0c0] bg-[#f3efe6] px-4 py-2 text-sm font-semibold text-[#3c3a34] transition-colors hover:bg-[#ece4d3]"
             >
               {showPasteArea ? "收起文本框" : "打开文本框"}
             </button>
@@ -114,10 +114,10 @@ export function StartInputModal({
               <textarea
                 value={value}
                 onChange={(event) => onChange(event.target.value)}
-                className="mt-2 min-h-56 w-full resize-y rounded-xl border border-[#dadce0] bg-white p-3 text-sm leading-6 text-[#1f1f1f] outline-none focus:border-[#1a73e8]"
+                className="mt-2 min-h-56 w-full resize-y rounded-xl border border-[#d8d0c0] bg-white p-3 text-sm leading-6 text-[#1f1f1f] outline-none focus:border-[#9a7b4f]"
                 placeholder="请粘贴至少 3 章小说文本..."
               />
-              <span className="mt-2 block text-xs font-normal text-[#5f6368]">
+              <span className="mt-2 block text-xs font-normal text-[#5f5b52]">
                 当前字数：{value.length}
               </span>
             </label>
@@ -134,7 +134,7 @@ export function StartInputModal({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-full border border-[#dadce0] bg-white px-5 py-2 text-sm font-semibold text-[#3c4043] transition-colors hover:bg-[#f8f9fa]"
+            className="rounded-full border border-[#d8d0c0] bg-white px-5 py-2 text-sm font-semibold text-[#3c3a34] transition-colors hover:bg-[#f3efe6]"
           >
             返回
           </button>
@@ -145,14 +145,14 @@ export function StartInputModal({
                 onUseSample();
                 setShowPasteArea(true);
               }}
-              className="rounded-full border border-[#dadce0] bg-white px-5 py-2 text-sm font-semibold text-[#3c4043] transition-colors hover:bg-[#f8f9fa]"
+              className="rounded-full border border-[#d8d0c0] bg-white px-5 py-2 text-sm font-semibold text-[#3c3a34] transition-colors hover:bg-[#f3efe6]"
             >
               使用示例文本
             </button>
             <button
               type="button"
               onClick={onGenerate}
-              className="rounded-full bg-[#1a73e8] px-6 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-[#1765cc] hover:shadow-md"
+              className="rounded-full bg-[#1f1f1f] px-6 py-2 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-[#000000] hover:shadow-md"
             >
               生成 YAML
             </button>

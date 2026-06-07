@@ -598,33 +598,39 @@ export default function Home() {
             <div className="flex items-center gap-2.5">
               <span
                 aria-hidden="true"
-                className="flex h-9 w-9 items-center justify-center text-[#1f1f1f]"
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1f1f1f] text-[#efece4] shadow-sm"
               >
                 <svg
-                  width="30"
-                  height="30"
+                  width="22"
+                  height="22"
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
-                  strokeWidth="2"
+                  strokeWidth="1.8"
                   strokeLinecap="round"
                   strokeLinejoin="round"
                 >
-                  <path d="M18.178 8c5.096 0 5.096 8 0 8-5.095 0-7.133-8-12.739-8-4.585 0-4.585 8 0 8 5.606 0 7.644-8 12.74-8z" />
+                  <rect x="3" y="4" width="18" height="16" rx="2.5" />
+                  <path d="M3 8.5h18" />
+                  <path d="M10 12.2v4.2l3.6-2.1-3.6-2.1Z" fill="currentColor" stroke="none" />
                 </svg>
               </span>
               <span className="text-lg font-semibold tracking-tight text-[#1f1f1f]">
-                入戏 InScene
+                入戏 <span className="text-[#9a7b4f]">InScene</span>
               </span>
             </div>
 
             <button
               type="button"
-              className="rounded-full px-4 py-2 text-sm font-medium text-[#5f5b52] transition-colors hover:text-[#1f1f1f]"
+              onClick={() => {
+                setInputError("");
+                handleUseSample();
+                setShowStartModal(true);
+              }}
+              className="rounded-full border border-[#d8d0c0] bg-[#f3efe6] px-4 py-2 text-sm font-medium text-[#5f5b52] transition-colors hover:border-[#c4b894] hover:text-[#1f1f1f]"
             >
-              登录
-            </button>
-          </header>
+              使用示例
+            </button>          </header>
 
           <section className="flex flex-1 flex-col items-center justify-center gap-10 py-10 text-center">
             <div className="flex max-w-2xl flex-col items-center">
