@@ -2,12 +2,6 @@
 
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import {
-  ConfigSelector,
-  type Genre,
-  type Strategy,
-} from "@/components/ConfigSelector";
-import { NovelInput } from "@/components/NovelInput";
 import { SceneCard, type ScenePreview } from "@/components/SceneCard";
 import { ShotCard, type ShotPreview } from "@/components/ShotCard";
 import {
@@ -241,8 +235,8 @@ export default function Home() {
   const [hasGenerated, setHasGenerated] = useState(false);
   const [novelText, setNovelText] = useState("");
   const [inputError, setInputError] = useState("");
-  const [genre, setGenre] = useState<Genre>("通用");
-  const [strategy, setStrategy] = useState<Strategy>("忠实改编");
+  const genre = "通用";
+  const strategy = "忠实改编";
   const [yamlText, setYamlText] = useState(mockYamlText);
   const [isGenerating, setIsGenerating] = useState(false);
   const [useMock, setUseMock] = useState(false);
@@ -397,6 +391,24 @@ export default function Home() {
   }
 
   const activeFeature = featureSlides[activeFeatureIndex];
+  const failedValidationCount = validationResults.filter(
+    (result) => !result.passed,
+  ).length;
+  const validationLabel = !hasGenerated
+    ? "等待校验"
+    : failedValidationCount > 0
+      ? "校验未通过"
+      : "校验通过";
+  const apiStatusLabel = isGenerating
+    ? "生成中"
+    : hasGenerated
+      ? statusMessage || "生成完成"
+      : "等待生成";
+  const displayedYamlText = hasGenerated
+    ? yamlText
+    : isGenerating
+      ? "正在生成 YAML，请稍候..."
+      : "等待生成 YAML...";
 
   if (!showWorkspace) {
     return (
@@ -511,182 +523,227 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f7f3ec] px-5 py-8 text-[#24211d] sm:px-8 lg:px-12">
-      <section className="mx-auto flex max-w-5xl flex-col gap-6">
-        <div className="flex flex-col gap-4 border-b border-[#d8cbb8] pb-5 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-[0.12em] text-[#7a4f2a]">
-              Novel2Script YAML Studio
-            </p>
-            <h1 className="mt-3 text-3xl font-semibold leading-tight sm:text-4xl">
-              小说转短剧 YAML 工作台
-            </h1>
-            <p className="mt-3 max-w-3xl text-base leading-7 text-[#5f584f]">
-              输入小说文本后生成结构化 YAML，并同步展示校验结果、场景预览和分镜预览。
-            </p>
-          </div>
+    <main className="min-h-screen bg-[#f6f7f8] text-[#1f2933]">
+      <section className="mx-auto flex max-w-[1440px] flex-col gap-5 px-5 py-5 sm:px-8">
+        <header className="grid gap-4 border border-[#dde3e8] bg-white p-4 sm:grid-cols-[auto_1fr_auto] sm:items-center">
           <button
             type="button"
             onClick={() => setShowWorkspace(false)}
-            className="w-fit border border-[#8c6a3f] bg-[#fffaf2] px-4 py-2 text-sm font-semibold text-[#24211d] transition-colors hover:bg-[#efe2cf]"
+            className="w-fit border border-[#c8d3dc] bg-white px-3 py-2 text-sm font-semibold text-[#394552] transition-colors hover:bg-[#f1f5f8]"
           >
-            返回首页
+            ← 返回
           </button>
-        </div>
-
-        <NovelInput
-          value={novelText}
-          onChange={setNovelText}
-          onUseSample={handleUseSample}
-          errorMessage={inputError}
-        />
-
-        <ConfigSelector
-          genre={genre}
-          strategy={strategy}
-          onGenreChange={setGenre}
-          onStrategyChange={setStrategy}
-        />
-
-        <div className="flex flex-col gap-3 border border-[#d8cbb8] bg-[#fffaf2] p-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <label className="flex items-center gap-2 text-sm font-semibold text-[#24211d]">
-              <input
-                type="checkbox"
-                checked={useMock}
-                onChange={(event) => setUseMock(event.target.checked)}
-              />
-              使用 Mock 示例
-            </label>
+          <div className="text-left sm:text-center">
+            <p className="text-sm font-semibold text-[#315f8a]">
+              Novel2Script YAML Studio
+            </p>
+            <h1 className="mt-1 text-2xl font-semibold text-[#101820]">
+              YAML 生成工作台
+            </h1>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <button
-              type="button"
-              onClick={() => {
-                void handleGenerate();
-              }}
-              disabled={isGenerating}
-              className="border border-[#8c6a3f] bg-[#7a4f2a] px-4 py-2 text-sm font-semibold text-[#fffaf2] transition-colors hover:bg-[#8b5b33]"
-            >
-              {isGenerating ? "生成中..." : "生成 YAML"}
-            </button>
-            <button
-              type="button"
-              onClick={handleCopy}
-              disabled={!hasGenerated}
-              className="border border-[#8c6a3f] bg-[#24211d] px-4 py-2 text-sm font-semibold text-[#fffaf2] transition-colors hover:bg-[#3a332b]"
-            >
-              复制 YAML
-            </button>
-            <button
-              type="button"
-              onClick={handleDownload}
-              disabled={!hasGenerated}
-              className="border border-[#8c6a3f] bg-[#fffaf2] px-4 py-2 text-sm font-semibold text-[#24211d] transition-colors hover:bg-[#efe2cf]"
-            >
-              下载 YAML
-            </button>
-          </div>
-        </div>
+          <div className="hidden sm:block" aria-hidden="true" />
+        </header>
 
-        {statusMessage || parseStatus !== "idle" ? (
-          <p className={`border px-4 py-3 text-sm ${statusClassName}`}>
-            {statusMessage ? (
-              <span className="block font-semibold">{statusMessage}</span>
-            ) : null}
-            {parseStatusMessage ? (
-              <span className={statusMessage ? "mt-1 block" : "block"}>
-                {parseStatusMessage}
-              </span>
-            ) : null}
-          </p>
-        ) : null}
-
-        {hasGenerated ? (
-          <ValidationPanel
-            results={validationResults}
-            source={validationSource}
-          />
-        ) : null}
-
-        {hasGenerated ? (
-          <>
-            <StoryBiblePanel storyBible={storyBible} />
-
-            <section className="space-y-4">
-              <div className="border-b border-[#d8cbb8] pb-3">
-                <h2 className="text-2xl font-semibold text-[#24211d]">
-                  剧本场景预览
-                </h2>
-                <p className="mt-2 text-sm leading-6 text-[#5f584f]">
-                  根据当前生成结果展示场景、人物、对白和动作。
-                </p>
-              </div>
-              <div className="space-y-5">
-                {previewData.scenes.length > 0 ? (
-                  previewData.scenes.map((scene, index) => (
-                    <SceneCard
-                      key={scene.id ?? `scene-${index}`}
-                      scene={scene}
-                      characterNames={previewData.characterNames}
-                    />
-                  ))
-                ) : (
-                  <p className="border border-[#d8cbb8] bg-[#fffaf2] p-4 text-sm text-[#5f584f]">
-                    暂无可展示的场景。
+        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_390px]">
+          <section className="flex min-w-0 flex-col gap-4">
+            <div className="border border-[#dde3e8] bg-white p-5">
+              <div className="flex flex-col gap-3 border-b border-[#dde3e8] pb-4 sm:flex-row sm:items-start sm:justify-between">
+                <div>
+                  <h2 className="text-xl font-semibold text-[#101820]">
+                    YAML 输出
+                  </h2>
+                  <p className="mt-1 text-sm text-[#59636e]">
+                    生成结果会显示在这里，支持滚动查看完整结构。
                   </p>
-                )}
+                </div>
+                <div className="flex flex-wrap gap-2 text-xs font-semibold">
+                  <span className="border border-[#c8d3dc] bg-[#fbfcfd] px-3 py-1 text-[#394552]">
+                    API：{apiStatusLabel}
+                  </span>
+                  <span
+                    className={`border px-3 py-1 ${
+                      hasGenerated && failedValidationCount === 0
+                        ? "border-[#8fb88f] bg-[#f3fbf0] text-[#2f6b35]"
+                        : hasGenerated
+                          ? "border-[#d59b9b] bg-[#fff4f4] text-[#9b2f2f]"
+                          : "border-[#c8d3dc] bg-[#fbfcfd] text-[#394552]"
+                    }`}
+                  >
+                    {validationLabel}
+                  </span>
+                </div>
+              </div>
+
+              <pre className="mt-4 max-h-[62vh] min-h-[52vh] overflow-auto border border-[#dde3e8] bg-[#fbfcfd] p-4 text-sm leading-6 text-[#101820]">
+                <code>{displayedYamlText}</code>
+              </pre>
+            </div>
+
+            <div className="border border-[#dde3e8] bg-white p-4">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      void handleGenerate();
+                    }}
+                    disabled={isGenerating}
+                    className="border border-[#101820] bg-[#101820] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#24313d] disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    {isGenerating ? "生成中..." : "生成 YAML"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCopy}
+                    disabled={!hasGenerated}
+                    className="border border-[#c8d3dc] bg-white px-4 py-2 text-sm font-semibold text-[#394552] transition-colors hover:bg-[#f1f5f8] disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    复制 YAML
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleDownload}
+                    disabled={!hasGenerated}
+                    className="border border-[#c8d3dc] bg-white px-4 py-2 text-sm font-semibold text-[#394552] transition-colors hover:bg-[#f1f5f8] disabled:cursor-not-allowed disabled:opacity-50"
+                  >
+                    下载 YAML
+                  </button>
+                </div>
+                <label className="flex items-center gap-2 text-sm font-semibold text-[#394552]">
+                  <input
+                    type="checkbox"
+                    checked={useMock}
+                    onChange={(event) => setUseMock(event.target.checked)}
+                  />
+                  使用 Mock 示例
+                </label>
+              </div>
+            </div>
+
+            {hasGenerated ? (
+              <p className="border border-[#8fb88f] bg-[#f3fbf0] px-4 py-3 text-sm font-semibold text-[#2f6b35]">
+                AI YAML 生成完成。
+              </p>
+            ) : null}
+
+            {hasGenerated ? (
+              <ValidationPanel
+                results={validationResults}
+                source={validationSource}
+              />
+            ) : null}
+
+            {parseStatus !== "idle" ? (
+              <p className={`border px-4 py-3 text-sm ${statusClassName}`}>
+                {parseStatusMessage ? (
+                  <span className="block">
+                    {parseStatusMessage}
+                  </span>
+                ) : null}
+              </p>
+            ) : null}
+
+            {inputError ? (
+              <p className="border border-[#d59b9b] bg-[#fff4f4] px-4 py-3 text-sm text-[#9b2f2f]">
+                {inputError}
+              </p>
+            ) : null}
+
+          </section>
+
+          <aside className="flex min-w-0 flex-col gap-4">
+            <section className="border border-[#dde3e8] bg-white p-4">
+              <h2 className="text-lg font-semibold text-[#101820]">
+                剧本工具箱
+              </h2>
+              <div className="mt-4 grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
+                {[
+                  "场景分镜预览",
+                  "剧本场景预览",
+                  "故事资源拆解",
+                ].map((toolName) => (
+                  <div
+                    key={toolName}
+                    className="border border-[#dde3e8] bg-[#fbfcfd] p-3 text-sm"
+                  >
+                    <p className="font-semibold text-[#101820]">{toolName}</p>
+                    <p className="mt-1 text-xs leading-5 text-[#59636e]">
+                      当前版本展示已生成结果，点击生成任务留到下一 PR。
+                    </p>
+                  </div>
+                ))}
               </div>
             </section>
 
-            <section className="space-y-4">
-              <div className="border-b border-[#d8cbb8] pb-3">
-                <h2 className="text-2xl font-semibold text-[#24211d]">
-                  分镜预览
-                </h2>
-                <p className="mt-2 text-sm leading-6 text-[#5f584f]">
-                  根据当前生成结果按场景分组展示基础分镜字段。
-                </p>
-              </div>
-              <div className="space-y-5">
-                {previewData.scenes.length > 0 ? (
-                  previewData.scenes.map((scene, sceneIndex) => (
-                  <section
-                    key={scene.id ?? `shot-scene-${sceneIndex}`}
-                    className="border border-[#d8cbb8] bg-[#fffaf2] p-5"
-                  >
-                    <h3 className="text-lg font-semibold text-[#24211d]">
-                      {scene.title ?? "未命名场景"}
-                    </h3>
-                    {(scene.shots ?? []).length > 0 ? (
-                      <div className="mt-4 grid gap-4 lg:grid-cols-2">
-                        {(scene.shots ?? []).map((shot, shotIndex) => (
-                          <ShotCard
-                            key={shot.id ?? `shot-${sceneIndex}-${shotIndex}`}
-                            shot={shot}
-                          />
-                        ))}
-                      </div>
+            {hasGenerated ? (
+              <>
+                <section className="border border-[#dde3e8] bg-white p-4">
+                  <h2 className="text-lg font-semibold text-[#101820]">
+                    剧本场景预览
+                  </h2>
+                  <div className="mt-3 space-y-3">
+                    {previewData.scenes.length > 0 ? (
+                      previewData.scenes.map((scene, index) => (
+                        <SceneCard
+                          key={scene.id ?? `scene-${index}`}
+                          scene={scene}
+                          characterNames={previewData.characterNames}
+                        />
+                      ))
                     ) : (
-                      <p className="mt-3 text-sm text-[#5f584f]">
-                        暂无分镜。
+                      <p className="border border-[#dde3e8] bg-[#fbfcfd] p-3 text-sm text-[#59636e]">
+                        暂无可展示的场景。
                       </p>
                     )}
-                  </section>
-                  ))
-                ) : (
-                  <p className="border border-[#d8cbb8] bg-[#fffaf2] p-4 text-sm text-[#5f584f]">
-                    暂无可展示的分镜。
-                  </p>
-                )}
-              </div>
-            </section>
+                  </div>
+                </section>
 
-            <pre className="max-h-[70vh] overflow-auto border border-[#d8cbb8] bg-[#fffaf2] p-5 text-sm leading-6 text-[#24211d] shadow-sm">
-              <code>{yamlText}</code>
-            </pre>
-          </>
-        ) : null}
+                <section className="border border-[#dde3e8] bg-white p-4">
+                  <h2 className="text-lg font-semibold text-[#101820]">
+                    分镜预览
+                  </h2>
+                  <div className="mt-3 space-y-3">
+                    {previewData.scenes.length > 0 ? (
+                      previewData.scenes.map((scene, sceneIndex) => (
+                        <section
+                          key={scene.id ?? `shot-scene-${sceneIndex}`}
+                          className="border border-[#dde3e8] bg-[#fbfcfd] p-3"
+                        >
+                          <h3 className="text-sm font-semibold text-[#101820]">
+                            {scene.title ?? "未命名场景"}
+                          </h3>
+                          {(scene.shots ?? []).length > 0 ? (
+                            <div className="mt-3 space-y-3">
+                              {(scene.shots ?? []).map((shot, shotIndex) => (
+                                <ShotCard
+                                  key={
+                                    shot.id ??
+                                    `shot-${sceneIndex}-${shotIndex}`
+                                  }
+                                  shot={shot}
+                                />
+                              ))}
+                            </div>
+                          ) : (
+                            <p className="mt-2 text-sm text-[#59636e]">
+                              暂无分镜。
+                            </p>
+                          )}
+                        </section>
+                      ))
+                    ) : (
+                      <p className="border border-[#dde3e8] bg-[#fbfcfd] p-3 text-sm text-[#59636e]">
+                        暂无可展示的分镜。
+                      </p>
+                    )}
+                  </div>
+                </section>
+
+                <StoryBiblePanel storyBible={storyBible} />
+              </>
+            ) : null}
+          </aside>
+        </div>
       </section>
     </main>
   );
