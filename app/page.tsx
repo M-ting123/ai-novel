@@ -546,9 +546,9 @@ export default function Home() {
           {previewData.scenes.map((scene, sceneIndex) => (
             <section
               key={scene.id ?? `modal-shot-scene-${sceneIndex}`}
-              className="border border-[#dde3e8] bg-[#fbfcfd] p-4"
+              className="rounded-2xl border border-[#e0e0e0] bg-[#f8f9fa] p-4"
             >
-              <h3 className="text-base font-semibold text-[#101820]">
+              <h3 className="text-base font-semibold text-[#1f1f1f]">
                 {scene.title ?? "未命名场景"}
               </h3>
               {(scene.shots ?? []).length > 0 ? (
@@ -561,13 +561,13 @@ export default function Home() {
                   ))}
                 </div>
               ) : (
-                <p className="mt-2 text-sm text-[#59636e]">暂无分镜。</p>
+                <p className="mt-2 text-sm text-[#5f6368]">暂无分镜。</p>
               )}
             </section>
           ))}
         </div>
       ) : (
-        <p className="text-sm text-[#59636e]">暂无可展示的分镜。</p>
+        <p className="text-sm text-[#5f6368]">暂无可展示的分镜。</p>
       );
     }
 
@@ -583,7 +583,7 @@ export default function Home() {
           ))}
         </div>
       ) : (
-        <p className="text-sm text-[#59636e]">暂无可展示的场景。</p>
+        <p className="text-sm text-[#5f6368]">暂无可展示的场景。</p>
       );
     }
 
@@ -592,39 +592,58 @@ export default function Home() {
 
   if (!showWorkspace) {
     return (
-      <main className="min-h-screen bg-[#fafafa] px-5 py-8 text-[#1f1f1f] sm:px-8 lg:px-12">
-        <section className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-6xl flex-col gap-8">
-          <header className="text-center">
-            <p className="text-sm font-semibold text-[#1a73e8]">
-              Novel2Script YAML Studio
-            </p>
-            <h1 className="mt-3 text-4xl font-semibold leading-tight text-[#1f1f1f] sm:text-6xl">
-              文入剧中
-            </h1>
-            <p className="mx-auto mt-4 max-w-2xl text-base leading-8 text-[#5f6368] sm:text-lg">
-              从章回到镜头，从文字到剧本，让小说在结构化剧本中重新开场。
-            </p>
+      <main className="min-h-screen bg-[#efece4] px-5 py-5 text-[#1f1f1f] sm:px-8 lg:px-12">
+        <section className="mx-auto flex min-h-[calc(100vh-2.5rem)] max-w-6xl flex-col">
+          <header className="flex items-center justify-between py-2">
+            <div className="flex items-center gap-2.5">
+              <span
+                aria-hidden="true"
+                className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#1f1f1f] text-[#efece4] shadow-sm"
+              >
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <rect x="3" y="4" width="18" height="16" rx="2.5" />
+                  <path d="M3 8.5h18" />
+                  <path
+                    d="M10 12.2v4.2l3.6-2.1-3.6-2.1Z"
+                    fill="currentColor"
+                    stroke="none"
+                  />
+                </svg>
+              </span>
+              <span className="text-lg font-semibold tracking-tight text-[#1f1f1f]">
+                入戏 <span className="text-[#9a7b4f]">InScene</span>
+              </span>
+            </div>
           </header>
 
-          <section className="grid flex-1 items-center gap-6 lg:grid-cols-[0.9fr_1.1fr]">
-            <div className="rounded-2xl border border-[#e0e0e0] bg-white p-6 shadow-sm sm:p-8">
-              <p className="text-sm font-semibold text-[#1a73e8]">
-                从小说开始
-              </p>
-              <h2 className="mt-3 text-3xl font-semibold leading-tight text-[#1f1f1f] sm:text-4xl">
-                把小说内容转成可继续创作的剧本 YAML
-              </h2>
-              <p className="mt-4 text-sm leading-7 text-[#5f6368] sm:text-base">
+          <section className="flex flex-1 flex-col items-center justify-center gap-10 py-10 text-center">
+            <div className="flex max-w-2xl flex-col items-center">
+              <span className="inline-flex items-center rounded-full border border-[#ddd5c6] bg-[#f3efe6] px-4 py-1.5 text-xs font-semibold tracking-wide text-[#9a7b4f]">
+                小说转剧本工作台
+              </span>
+              <h1 className="mt-6 text-5xl font-bold leading-tight text-[#1f1f1f] sm:text-6xl">
+                让文字，自然入戏
+              </h1>
+              <p className="mt-5 max-w-lg text-base leading-8 text-[#5f5b52] sm:text-lg">
                 上传或粘贴小说章节后，系统会生成结构化剧本 YAML，并继续拆解场景、分镜和故事资产。
               </p>
-              <div className="mt-6 flex flex-wrap gap-3 text-sm text-[#5f6368]">
-                <span className="rounded-full bg-[#f1f3f4] px-3 py-1">
+              <div className="mt-7 flex flex-wrap items-center justify-center gap-3 text-sm text-[#5f5b52]">
+                <span className="rounded-full bg-[#e3ded2] px-3 py-1">
                   TXT 导入
                 </span>
-                <span className="rounded-full bg-[#f1f3f4] px-3 py-1">
+                <span className="rounded-full bg-[#e3ded2] px-3 py-1">
                   YAML 输出
                 </span>
-                <span className="rounded-full bg-[#f1f3f4] px-3 py-1">
+                <span className="rounded-full bg-[#e3ded2] px-3 py-1">
                   Schema 校验
                 </span>
               </div>
@@ -635,30 +654,25 @@ export default function Home() {
                   setInputError("");
                   setShowStartModal(true);
                 }}
-                className="mt-8 rounded-full bg-[#1a73e8] px-7 py-3 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-[#1765cc] hover:shadow-md"
+                className="mt-9 rounded-full bg-[#1f1f1f] px-8 py-3.5 text-sm font-semibold text-white shadow-sm transition-all hover:-translate-y-0.5 hover:bg-black hover:shadow-md"
               >
-                开始
+                开始创作 →
               </button>
             </div>
 
-            <div className="rounded-2xl border border-[#e0e0e0] bg-white p-5 shadow-sm">
-              <div className="rounded-2xl bg-[#f8fafd] p-5">
-                <div className="flex items-start justify-between gap-4">
-                  <div>
-                    <p className="text-xs font-semibold text-[#5f6368]">
-                      {String(activeFeatureIndex + 1).padStart(2, "0")} /{" "}
-                      {String(featureSlides.length).padStart(2, "0")}
-                    </p>
-                    <h3 className="mt-2 text-xl font-semibold text-[#1f1f1f]">
-                      {activeFeature.title}
-                    </h3>
-                    <p className="mt-2 min-h-12 text-sm leading-6 text-[#5f6368]">
-                      {activeFeature.description}
-                    </p>
-                  </div>
-                  <span className="rounded-full bg-[#d3e3fd] px-3 py-1 text-xs font-semibold text-[#1a73e8]">
-                    自动轮播
-                  </span>
+            <div className="w-full max-w-xl rounded-3xl border border-[#e6e1d6] bg-white p-5 text-left shadow-sm">
+              <div className="rounded-2xl bg-[#f7f5ef] p-5">
+                <div>
+                  <p className="text-xs font-semibold text-[#5f6368]">
+                    {String(activeFeatureIndex + 1).padStart(2, "0")} /{" "}
+                    {String(featureSlides.length).padStart(2, "0")}
+                  </p>
+                  <h3 className="mt-2 text-xl font-semibold text-[#1f1f1f]">
+                    {activeFeature.title}
+                  </h3>
+                  <p className="mt-2 min-h-12 text-sm leading-6 text-[#5f6368]">
+                    {activeFeature.description}
+                  </p>
                 </div>
 
                 <div className="mt-5 flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-2xl bg-white">
@@ -680,8 +694,8 @@ export default function Home() {
                     aria-label={`切换到${feature.title}`}
                     className={`h-2.5 rounded-full transition-all ${
                       activeFeatureIndex === index
-                        ? "w-8 bg-[#1a73e8]"
-                        : "w-2.5 bg-[#c4c7cc] hover:bg-[#9aa0a6]"
+                        ? "w-8 bg-[#9a7b4f]"
+                        : "w-2.5 bg-[#cfc8b8] hover:bg-[#b3a98f]"
                     }`}
                   />
                 ))}
@@ -720,27 +734,50 @@ export default function Home() {
   }
 
   return (
-    <main className="min-h-screen bg-[#f6f7f8] text-[#1f2933]">
+    <main className="min-h-screen bg-[#f4f3f0] text-[#1f1f1f]">
       <section className="mx-auto grid max-w-[1440px] gap-5 px-5 py-5 sm:px-8 lg:grid-cols-[240px_minmax(0,1fr)_390px]">
-        <aside className="flex min-w-0 flex-col gap-4 border border-[#dde3e8] bg-white p-4">
+        <aside className="flex min-w-0 flex-col gap-4 rounded-3xl border border-[#eceae6] bg-white p-4 shadow-sm lg:sticky lg:top-5 lg:self-start">
           <button
             type="button"
             onClick={() => setShowWorkspace(false)}
-            className="w-fit rounded-full border border-[#c8d3dc] bg-white px-4 py-2 text-sm font-semibold text-[#394552] transition-all hover:-translate-x-0.5 hover:bg-[#f1f5f8]"
+            className="flex w-fit items-center gap-1.5 rounded-full border border-[#e3ded2] bg-[#f7f5ef] px-4 py-2 text-sm font-semibold text-[#5f5b52] transition-all hover:-translate-x-0.5 hover:border-[#c4b894] hover:text-[#1f1f1f]"
           >
             ← 返回主页
           </button>
 
-          <div className="border-b border-[#dde3e8] pb-4">
-            <p className="text-sm font-semibold text-[#315f8a]">
-              Novel2Script
-            </p>
-            <h1 className="mt-1 text-xl font-semibold text-[#101820]">
-              YAML 生成工作台
-            </h1>
+          <div className="flex items-center gap-2.5 border-b border-[#eceae6] pb-4">
+            <span
+              aria-hidden="true"
+              className="flex h-9 w-9 items-center justify-center rounded-xl bg-[#1f1f1f] text-[#efece4]"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.8"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <rect x="3" y="4" width="18" height="16" rx="2.5" />
+                <path d="M3 8.5h18" />
+                <path
+                  d="M10 12.2v4.2l3.6-2.1-3.6-2.1Z"
+                  fill="currentColor"
+                  stroke="none"
+                />
+              </svg>
+            </span>
+            <div>
+              <p className="text-sm font-semibold text-[#1f1f1f]">
+                入戏 <span className="text-[#9a7b4f]">InScene</span>
+              </p>
+              <p className="mt-0.5 text-xs text-[#8a857a]">YAML 生成工作台</p>
+            </div>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-2.5">
             {statusCards.map((status) => (
               <button
                 key={status.id}
@@ -750,24 +787,39 @@ export default function Home() {
                     current === status.id ? null : status.id,
                   )
                 }
-                className={`w-full rounded-2xl border px-3 py-3 text-left text-sm transition-all hover:-translate-y-0.5 ${
+                className={`flex w-full items-center gap-2.5 rounded-2xl border px-3 py-3 text-left text-sm transition-all hover:-translate-y-0.5 ${
+                  selectedStatusDetail === status.id
+                    ? "ring-2 ring-[#9a7b4f]/20"
+                    : ""
+                } ${
                   status.tone === "success"
-                    ? "border-[#b9dec0] bg-[#f3fbf0] text-[#2f6b35]"
+                    ? "border-[#cbe6cf] bg-[#f3fbf0] text-[#2f6b35]"
                     : status.tone === "error"
-                      ? "border-[#f0b8b0] bg-[#fff4f4] text-[#9b2f2f]"
-                      : "border-[#dde3e8] bg-[#fbfcfd] text-[#394552]"
+                      ? "border-[#f0c9c2] bg-[#fdf3f1] text-[#9b2f2f]"
+                      : "border-[#eceae6] bg-[#faf9f6] text-[#5f5b52]"
                 }`}
               >
-                <span className="block font-semibold">{status.label}</span>
-                <span className="mt-1 block text-xs opacity-80">
-                  点击查看详情
+                <span
+                  className={`h-2 w-2 shrink-0 rounded-full ${
+                    status.tone === "success"
+                      ? "bg-[#3c8a4b]"
+                      : status.tone === "error"
+                        ? "bg-[#c0584b]"
+                        : "bg-[#c2bcae]"
+                  }`}
+                />
+                <span className="min-w-0">
+                  <span className="block font-semibold">{status.label}</span>
+                  <span className="mt-0.5 block text-xs opacity-80">
+                    点击查看详情
+                  </span>
                 </span>
               </button>
             ))}
           </div>
 
           {selectedStatusDetail ? (
-            <div className="rounded-2xl border border-[#dde3e8] bg-[#fbfcfd] p-3 text-sm leading-6 text-[#394552]">
+            <div className="rounded-2xl border border-[#eceae6] bg-[#faf9f6] p-3 text-sm leading-6 text-[#5f5b52]">
               {
                 statusCards.find((status) => status.id === selectedStatusDetail)
                   ?.detail
@@ -778,27 +830,27 @@ export default function Home() {
 
         <div className="min-w-0">
           <section className="flex min-w-0 flex-col gap-4">
-            <div className="border border-[#dde3e8] bg-white p-5">
-              <div className="flex flex-col gap-3 border-b border-[#dde3e8] pb-4 sm:flex-row sm:items-start sm:justify-between">
+            <div className="rounded-3xl border border-[#eceae6] bg-white p-5 shadow-sm">
+              <div className="flex flex-col gap-3 border-b border-[#eceae6] pb-4 sm:flex-row sm:items-start sm:justify-between">
                 <div>
-                  <h2 className="text-xl font-semibold text-[#101820]">
+                  <h2 className="text-xl font-semibold text-[#1f1f1f]">
                     YAML 输出
                   </h2>
-                  <p className="mt-1 text-sm text-[#59636e]">
+                  <p className="mt-1 text-sm text-[#8a857a]">
                     生成结果会显示在这里，支持滚动查看完整结构。
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2 text-xs font-semibold">
-                  <span className="border border-[#c8d3dc] bg-[#fbfcfd] px-3 py-1 text-[#394552]">
+                  <span className="rounded-full border border-[#e3ded2] bg-[#f7f5ef] px-3 py-1 text-[#5f5b52]">
                     API：{apiStatusLabel}
                   </span>
                   <span
-                    className={`border px-3 py-1 ${
+                    className={`rounded-full border px-3 py-1 ${
                       hasGenerated && failedValidationCount === 0
-                        ? "border-[#8fb88f] bg-[#f3fbf0] text-[#2f6b35]"
+                        ? "border-[#cbe6cf] bg-[#f3fbf0] text-[#2f6b35]"
                         : hasGenerated
-                          ? "border-[#d59b9b] bg-[#fff4f4] text-[#9b2f2f]"
-                          : "border-[#c8d3dc] bg-[#fbfcfd] text-[#394552]"
+                          ? "border-[#f0c9c2] bg-[#fdf3f1] text-[#9b2f2f]"
+                          : "border-[#e3ded2] bg-[#f7f5ef] text-[#5f5b52]"
                     }`}
                   >
                     {validationLabel}
@@ -806,22 +858,22 @@ export default function Home() {
                 </div>
               </div>
 
-              <pre className="mt-4 max-h-[62vh] min-h-[52vh] overflow-auto border border-[#dde3e8] bg-[#fbfcfd] p-4 text-sm leading-6 text-[#101820]">
+              <pre className="mt-4 max-h-[62vh] min-h-[52vh] overflow-auto rounded-2xl border border-[#eceae6] bg-[#faf9f6] p-4 font-mono text-sm leading-6 text-[#1f1f1f]">
                 <code>{displayedYamlText}</code>
               </pre>
             </div>
 
-            <div className="border border-[#dde3e8] bg-white p-4">
+            <div className="rounded-3xl border border-[#eceae6] bg-white p-4 shadow-sm">
               <div className="grid gap-4 xl:grid-cols-[1fr_auto] xl:items-end">
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <label className="block text-sm font-semibold text-[#394552]">
+                  <label className="block text-sm font-semibold text-[#5f5b52]">
                     题材类型
                     <select
                       value={genre}
                       onChange={(event) =>
                         setGenre(event.target.value as Genre)
                       }
-                      className="mt-2 w-full border border-[#c8d3dc] bg-white px-3 py-2 text-sm text-[#101820] outline-none focus:border-[#315f8a]"
+                      className="mt-2 w-full rounded-xl border border-[#e3ded2] bg-white px-3 py-2 text-sm text-[#1f1f1f] outline-none focus:border-[#9a7b4f]"
                     >
                       {["悬疑", "都市", "玄幻", "言情", "通用"].map(
                         (option) => (
@@ -833,14 +885,14 @@ export default function Home() {
                     </select>
                   </label>
 
-                  <label className="block text-sm font-semibold text-[#394552]">
+                  <label className="block text-sm font-semibold text-[#5f5b52]">
                     改编策略
                     <select
                       value={strategy}
                       onChange={(event) =>
                         setStrategy(event.target.value as Strategy)
                       }
-                      className="mt-2 w-full border border-[#c8d3dc] bg-white px-3 py-2 text-sm text-[#101820] outline-none focus:border-[#315f8a]"
+                      className="mt-2 w-full rounded-xl border border-[#e3ded2] bg-white px-3 py-2 text-sm text-[#1f1f1f] outline-none focus:border-[#9a7b4f]"
                     >
                       {["忠实改编", "压缩改编", "冲突强化"].map((option) => (
                         <option key={option} value={option}>
@@ -858,7 +910,7 @@ export default function Home() {
                       void handleGenerate();
                     }}
                     disabled={isGenerating}
-                    className="border border-[#101820] bg-[#101820] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#24313d] disabled:cursor-not-allowed disabled:opacity-60"
+                    className="rounded-full border border-[#1f1f1f] bg-[#1f1f1f] px-5 py-2 text-sm font-semibold text-white transition-all hover:-translate-y-0.5 hover:bg-black disabled:cursor-not-allowed disabled:opacity-60"
                   >
                     {isGenerating ? "生成中..." : "生成 YAML"}
                   </button>
@@ -866,7 +918,7 @@ export default function Home() {
                     type="button"
                     onClick={handleCopy}
                     disabled={!hasGenerated}
-                    className="border border-[#c8d3dc] bg-white px-4 py-2 text-sm font-semibold text-[#394552] transition-colors hover:bg-[#f1f5f8] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="rounded-full border border-[#e3ded2] bg-[#f7f5ef] px-5 py-2 text-sm font-semibold text-[#5f5b52] transition-colors hover:border-[#c4b894] hover:text-[#1f1f1f] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     复制 YAML
                   </button>
@@ -874,7 +926,7 @@ export default function Home() {
                     type="button"
                     onClick={handleDownload}
                     disabled={!hasGenerated}
-                    className="border border-[#c8d3dc] bg-white px-4 py-2 text-sm font-semibold text-[#394552] transition-colors hover:bg-[#f1f5f8] disabled:cursor-not-allowed disabled:opacity-50"
+                    className="rounded-full border border-[#e3ded2] bg-[#f7f5ef] px-5 py-2 text-sm font-semibold text-[#5f5b52] transition-colors hover:border-[#c4b894] hover:text-[#1f1f1f] disabled:cursor-not-allowed disabled:opacity-50"
                   >
                     下载 YAML
                   </button>
@@ -882,7 +934,7 @@ export default function Home() {
               </div>
 
               <div className="mt-3 flex justify-end">
-                <label className="flex items-center gap-2 text-sm font-semibold text-[#394552]">
+                <label className="flex items-center gap-2 text-sm font-semibold text-[#5f5b52]">
                   <input
                     type="checkbox"
                     checked={useMock}
@@ -894,7 +946,7 @@ export default function Home() {
             </div>
 
             {inputError ? (
-              <p className="border border-[#d59b9b] bg-[#fff4f4] px-4 py-3 text-sm text-[#9b2f2f]">
+              <p className="rounded-2xl border border-[#f0c9c2] bg-[#fdf3f1] px-4 py-3 text-sm text-[#9b2f2f]">
                 {inputError}
               </p>
             ) : null}
@@ -903,8 +955,8 @@ export default function Home() {
         </div>
 
           <aside className="flex min-w-0 flex-col gap-4">
-            <section className="border border-[#dde3e8] bg-white p-4">
-              <h2 className="text-lg font-semibold text-[#101820]">
+            <section className="rounded-3xl border border-[#eceae6] bg-white p-4 shadow-sm">
+              <h2 className="text-lg font-semibold text-[#1f1f1f]">
                 剧本工具箱
               </h2>
               <div className="mt-4 grid gap-3 sm:grid-cols-3 lg:grid-cols-1">
@@ -914,21 +966,30 @@ export default function Home() {
                     type="button"
                     onClick={() => handleCreateToolTask(tool)}
                     disabled={!hasGenerated}
-                    className="border border-[#dde3e8] bg-[#fbfcfd] p-3 text-left text-sm transition-colors hover:border-[#9fb4c5] hover:bg-[#f1f5f8] disabled:cursor-not-allowed disabled:opacity-55"
+                    className="rounded-2xl border border-[#eceae6] bg-[#faf9f6] p-3 text-left text-sm transition-all hover:-translate-y-0.5 hover:border-[#c4b894] hover:bg-[#f7f5ef] hover:shadow-sm disabled:cursor-not-allowed disabled:opacity-55"
                   >
-                    <p className="font-semibold text-[#101820]">
-                      {tool.title}
-                    </p>
-                    <p className="mt-1 text-xs leading-5 text-[#59636e]">
-                      {hasGenerated ? tool.description : "生成 YAML 后可使用。"}
-                    </p>
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="font-semibold text-[#1f1f1f]">
+                          {tool.title}
+                        </p>
+                        <p className="mt-1 text-xs leading-5 text-[#8a857a]">
+                          {hasGenerated
+                            ? tool.description
+                            : "生成 YAML 后可使用。"}
+                        </p>
+                      </div>
+                      <span className="rounded-full bg-white px-2 py-1 text-xs font-semibold text-[#9a7b4f]">
+                        →
+                      </span>
+                    </div>
                   </button>
                 ))}
               </div>
             </section>
 
-            <section className="border border-[#dde3e8] bg-white p-4">
-              <h2 className="text-lg font-semibold text-[#101820]">
+            <section className="rounded-3xl border border-[#eceae6] bg-white p-4 shadow-sm">
+              <h2 className="text-lg font-semibold text-[#1f1f1f]">
                 生成结果
               </h2>
               {toolTasks.length > 0 ? (
@@ -936,10 +997,10 @@ export default function Home() {
                   {toolTasks.map((task) => (
                     <li
                       key={task.id}
-                      className={`border text-sm ${
+                      className={`rounded-2xl border text-sm ${
                         task.status === "done"
-                          ? "border-[#c8d3dc] bg-white transition-colors hover:bg-[#f1f5f8]"
-                          : "border-[#dde3e8] bg-[#f7fafc]"
+                          ? "border-[#e3ded2] bg-white transition-all hover:-translate-y-0.5 hover:bg-[#faf9f6] hover:shadow-sm"
+                          : "border-[#eceae6] bg-[#faf9f6]"
                       }`}
                     >
                       <button
@@ -953,14 +1014,14 @@ export default function Home() {
                             className={`h-2.5 w-2.5 shrink-0 rounded-full ${
                               task.status === "done"
                                 ? "bg-[#3c8a4b]"
-                                : "bg-[#9aa7b2]"
+                                : "bg-[#c2bcae]"
                             }`}
                           />
                           <div className="min-w-0">
-                            <p className="truncate font-semibold text-[#101820]">
+                            <p className="truncate font-semibold text-[#1f1f1f]">
                               {task.title}
                             </p>
-                            <p className="mt-1 text-xs text-[#59636e]">
+                            <p className="mt-1 text-xs text-[#8a857a]">
                               {task.createdAt}
                             </p>
                           </div>
@@ -969,7 +1030,7 @@ export default function Home() {
                           className={`shrink-0 text-xs font-semibold ${
                             task.status === "done"
                               ? "text-[#2f6b35]"
-                              : "text-[#59636e]"
+                              : "text-[#8a857a]"
                           }`}
                         >
                           {task.status === "done" ? "已生成" : "生成中..."}
@@ -979,7 +1040,7 @@ export default function Home() {
                   ))}
                 </ul>
               ) : (
-                <p className="mt-3 text-sm leading-6 text-[#59636e]">
+                <p className="mt-3 text-sm leading-6 text-[#8a857a]">
                   点击上方工具卡片后，这里会显示生成任务记录。
                 </p>
               )}
@@ -988,21 +1049,21 @@ export default function Home() {
       </section>
 
       {selectedToolTask ? (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#101820]/45 px-5 py-8">
-          <section className="max-h-[92vh] w-full max-w-4xl overflow-auto border border-[#dde3e8] bg-white p-5 shadow-xl">
-            <div className="flex flex-col gap-3 border-b border-[#dde3e8] pb-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-5 py-8">
+          <section className="max-h-[92vh] w-full max-w-4xl overflow-auto rounded-3xl border border-[#eceae6] bg-white p-6 shadow-[0_24px_80px_rgba(60,64,67,0.24)]">
+            <div className="flex flex-col gap-3 border-b border-[#eceae6] pb-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
-                <p className="text-sm font-semibold text-[#315f8a]">
+                <p className="text-sm font-semibold text-[#9a7b4f]">
                   已生成内容
                 </p>
-                <h2 className="mt-1 text-2xl font-semibold text-[#101820]">
+                <h2 className="mt-1 text-2xl font-semibold text-[#1f1f1f]">
                   {selectedToolTask.title}
                 </h2>
               </div>
               <button
                 type="button"
                 onClick={() => setSelectedToolTask(null)}
-                className="w-fit border border-[#c8d3dc] bg-white px-4 py-2 text-sm font-semibold text-[#394552] transition-colors hover:bg-[#f1f5f8]"
+                className="w-fit rounded-full border border-[#e3ded2] bg-[#f7f5ef] px-4 py-2 text-sm font-semibold text-[#5f5b52] transition-colors hover:border-[#c4b894] hover:text-[#1f1f1f]"
               >
                 关闭
               </button>
