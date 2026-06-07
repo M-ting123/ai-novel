@@ -10,7 +10,6 @@ import {
   type StoryBiblePreview,
 } from "@/components/StoryBiblePanel";
 import { StartInputModal } from "@/components/StartInputModal";
-import { ValidationPanel } from "@/components/ValidationPanel";
 import { mockScriptData, mockYamlText, sampleNovelText } from "@/lib/mock-data";
 import { validateSchema } from "@/lib/validate-schema";
 
@@ -44,6 +43,8 @@ type ToolTask = {
   status: "generating" | "done";
   createdAt: string;
 };
+
+type StatusDetailType = "generation" | "validation" | "parse";
 
 const featureSlides: FeatureSlide[] = [
   {
@@ -277,22 +278,11 @@ export default function Home() {
   const [selectedToolTask, setSelectedToolTask] = useState<ToolTask | null>(
     null,
   );
+  const [selectedStatusDetail, setSelectedStatusDetail] =
+    useState<StatusDetailType | null>(null);
   const validationResults = validateSchema(validationData);
   const previewData = extractPreviewData(validationData);
   const storyBible = extractStoryBible(validationData);
-  const statusClassName =
-    parseStatus === "success"
-      ? "border-[#8fb88f] bg-[#f3fbf0] text-[#2f6b35]"
-      : parseStatus === "failed"
-        ? "border-[#d59b9b] bg-[#fff4f4] text-[#9b2f2f]"
-        : "border-[#d8cbb8] bg-white text-[#5f584f]";
-  const parseStatusMessage =
-    parseStatus === "success"
-      ? "YAML 结构解析成功：服务器已把文本结果转成后续功能可使用的数据。"
-      : parseStatus === "failed"
-        ? "YAML 结构解析失败：当前已显示 Mock 示例，后续功能暂不能使用这次 AI 结果。"
-        : "";
-
   useEffect(() => {
     if (showWorkspace) {
       return;
@@ -474,6 +464,81 @@ export default function Home() {
     : isGenerating
       ? "正在生成 YAML，请稍候..."
       : "等待生成 YAML...";
+  const generationStatus = isGenerating
+    ? {
+        title: "生成中",
+        tone: "neutral",
+        detail: "AI 正在生成 YAML，请等待结果返回。",
+      }
+    : hasGenerated
+      ? {
+          title: "生成完成",
+          tone: "success",
+          detail: statusMessage || "AI YAML 已生成完成。",
+        }
+      : {
+          title: "等待生成",
+          tone: "neutral",
+          detail: "输入小说文本后点击生成 YAML。",
+        };
+  const validationStatus = !hasGenerated
+    ? {
+        title: "等待校验",
+        tone: "neutral",
+        detail: "生成 YAML 后会自动进行 Schema 校验。",
+      }
+    : failedValidationCount > 0
+      ? {
+          title: "校验未通过",
+          tone: "error",
+          detail: `当前校验：${validationSource}，通过 ${
+            validationResults.length - failedValidationCount
+          } 条，失败 ${failedValidationCount} 条。`,
+        }
+      : {
+          title: "校验通过",
+          tone: "success",
+          detail: `当前校验：${validationSource}，通过 ${validationResults.length} 条，失败 0 条。`,
+        };
+  const parseStatusSummary =
+    parseStatus === "success"
+      ? {
+          title: "解析成功",
+          tone: "success",
+          detail: "服务器已把文本结果转成后续功能可使用的数据。",
+        }
+      : parseStatus === "failed"
+        ? {
+            title: "解析失败",
+            tone: "error",
+            detail:
+              "当前已显示 Mock 示例，后续功能暂不能使用这次 AI 结果。",
+          }
+        : {
+            title: "等待解析",
+            tone: "neutral",
+            detail: "生成 YAML 后会自动解析结构化数据。",
+          };
+  const statusCards = [
+    {
+      id: "generation" as const,
+      label: generationStatus.title,
+      detail: generationStatus.detail,
+      tone: generationStatus.tone,
+    },
+    {
+      id: "validation" as const,
+      label: validationStatus.title,
+      detail: validationStatus.detail,
+      tone: validationStatus.tone,
+    },
+    {
+      id: "parse" as const,
+      label: parseStatusSummary.title,
+      detail: parseStatusSummary.detail,
+      tone: parseStatusSummary.tone,
+    },
+  ];
   const renderToolTaskContent = (task: ToolTask) => {
     if (task.toolId === "shots") {
       return previewData.scenes.length > 0 ? (
@@ -639,27 +704,62 @@ export default function Home() {
 
   return (
     <main className="min-h-screen bg-[#f6f7f8] text-[#1f2933]">
-      <section className="mx-auto flex max-w-[1440px] flex-col gap-5 px-5 py-5 sm:px-8">
-        <header className="grid gap-4 border border-[#dde3e8] bg-white p-4 sm:grid-cols-[auto_1fr_auto] sm:items-center">
+      <section className="mx-auto grid max-w-[1440px] gap-5 px-5 py-5 sm:px-8 lg:grid-cols-[240px_minmax(0,1fr)_390px]">
+        <aside className="flex min-w-0 flex-col gap-4 border border-[#dde3e8] bg-white p-4">
           <button
             type="button"
             onClick={() => setShowWorkspace(false)}
-            className="w-fit border border-[#c8d3dc] bg-white px-3 py-2 text-sm font-semibold text-[#394552] transition-colors hover:bg-[#f1f5f8]"
+            className="w-fit rounded-full border border-[#c8d3dc] bg-white px-4 py-2 text-sm font-semibold text-[#394552] transition-all hover:-translate-x-0.5 hover:bg-[#f1f5f8]"
           >
-            ← 返回
+            ← 返回主页
           </button>
-          <div className="text-left sm:text-center">
+
+          <div className="border-b border-[#dde3e8] pb-4">
             <p className="text-sm font-semibold text-[#315f8a]">
-              Novel2Script YAML Studio
+              Novel2Script
             </p>
-            <h1 className="mt-1 text-2xl font-semibold text-[#101820]">
+            <h1 className="mt-1 text-xl font-semibold text-[#101820]">
               YAML 生成工作台
             </h1>
           </div>
-          <div className="hidden sm:block" aria-hidden="true" />
-        </header>
 
-        <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_390px]">
+          <div className="space-y-3">
+            {statusCards.map((status) => (
+              <button
+                key={status.id}
+                type="button"
+                onClick={() =>
+                  setSelectedStatusDetail((current) =>
+                    current === status.id ? null : status.id,
+                  )
+                }
+                className={`w-full rounded-2xl border px-3 py-3 text-left text-sm transition-all hover:-translate-y-0.5 ${
+                  status.tone === "success"
+                    ? "border-[#b9dec0] bg-[#f3fbf0] text-[#2f6b35]"
+                    : status.tone === "error"
+                      ? "border-[#f0b8b0] bg-[#fff4f4] text-[#9b2f2f]"
+                      : "border-[#dde3e8] bg-[#fbfcfd] text-[#394552]"
+                }`}
+              >
+                <span className="block font-semibold">{status.label}</span>
+                <span className="mt-1 block text-xs opacity-80">
+                  点击查看详情
+                </span>
+              </button>
+            ))}
+          </div>
+
+          {selectedStatusDetail ? (
+            <div className="rounded-2xl border border-[#dde3e8] bg-[#fbfcfd] p-3 text-sm leading-6 text-[#394552]">
+              {
+                statusCards.find((status) => status.id === selectedStatusDetail)
+                  ?.detail
+              }
+            </div>
+          ) : null}
+        </aside>
+
+        <div className="min-w-0">
           <section className="flex min-w-0 flex-col gap-4">
             <div className="border border-[#dde3e8] bg-white p-5">
               <div className="flex flex-col gap-3 border-b border-[#dde3e8] pb-4 sm:flex-row sm:items-start sm:justify-between">
@@ -776,29 +876,6 @@ export default function Home() {
               </div>
             </div>
 
-            {hasGenerated ? (
-              <p className="border border-[#8fb88f] bg-[#f3fbf0] px-4 py-3 text-sm font-semibold text-[#2f6b35]">
-                AI YAML 生成完成。
-              </p>
-            ) : null}
-
-            {hasGenerated ? (
-              <ValidationPanel
-                results={validationResults}
-                source={validationSource}
-              />
-            ) : null}
-
-            {parseStatus !== "idle" ? (
-              <p className={`border px-4 py-3 text-sm ${statusClassName}`}>
-                {parseStatusMessage ? (
-                  <span className="block">
-                    {parseStatusMessage}
-                  </span>
-                ) : null}
-              </p>
-            ) : null}
-
             {inputError ? (
               <p className="border border-[#d59b9b] bg-[#fff4f4] px-4 py-3 text-sm text-[#9b2f2f]">
                 {inputError}
@@ -806,6 +883,7 @@ export default function Home() {
             ) : null}
 
           </section>
+        </div>
 
           <aside className="flex min-w-0 flex-col gap-4">
             <section className="border border-[#dde3e8] bg-white p-4">
@@ -890,7 +968,6 @@ export default function Home() {
               )}
             </section>
           </aside>
-        </div>
       </section>
 
       {selectedToolTask ? (
